@@ -8,3 +8,5 @@
 !openoceancamera/
 !openoceancamera/**
 !ngrok
+!.github
+!.github/**
