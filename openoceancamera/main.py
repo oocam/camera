@@ -108,18 +108,27 @@ def start_capture(video, slot):
     print("start capture")
     logger.info("Starting to capture")
     try:
+        print("Creating camera object")
         camera = Camera()
-        camera.set_capture_frequency(slot["frequency"])
+        print("Created camera object")
+        logger.info("Camera object initialised")
+        print(slot)
         camera.set_iso(slot["iso"])
-        camera.set_shutter_speed(slot["shutter_speed"])
+        print("iso set") 
         camera.set_camera_resolution((int(slot["resolution"]["x"]), int(slot["resolution"]["y"])))
-        camera.set_camera_frame_rate(slot["framerate"])
+        print("camera resolution set")
         camera.set_camera_exposure_mode(slot.get("exposure_mode", "auto"))
+        print("exposure mode set") 
         camera.set_camera_exposure_compensation(int(slot.get("exposure_compensation", 0)))
+        print("exposure compensation set") 
 
         logger.info(f"Finised setting up the camera for the slot {slot}")
         try:
             if not video:
+                camera.set_capture_frequency(slot["frequency"])
+                print("capture frequency set") 
+                camera.set_shutter_speed(slot["shutter_speed"])
+                print("shutter speed set") 
                 filename = external_drive + "/" + datetime.now().strftime("%Y-%m-%d-%H-%M-%S")  + ".jpg"
                 last_file_name = filename
                 print("Capturing:")
@@ -161,6 +170,8 @@ def start_capture(video, slot):
                 camera.do_close()
                 logger.info("Closed the camera object")
             else:
+                camera.set_camera_frame_rate(slot["framerate"])
+                print("frame rate set") 
                 filename = external_drive + "/" + camera_name + "_" + slot["start"].replace(":","-") + "_" + slot["stop"].replace(":","-") + str(slot["framerate"]) + ".h264"
                 camera.do_record(filename=filename)
                 print("Started Recording")
