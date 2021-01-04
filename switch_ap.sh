@@ -1,5 +1,8 @@
 #!/bin/bash 
 
+#Ensure that WiFI radio is not blocked 
+sudo rfkill unblock wlan
+
 #reverting dhcpcd.conf 
 sudo mv /etc/dhcpcd.conf /etc/dhcpcd.conf.tmp 
 sudo mv /etc/dhcpcd.conf.backup /etc/dhcpcd.conf
