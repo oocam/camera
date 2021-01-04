@@ -4,7 +4,7 @@ from ..Camera import Camera
 
 class TestCamera: 
     def test_single_image_capture(self): 
-        camera = Camera(resolution=(3280,2464)) 
+        camera = Camera() 
         camera.do_capture("/home/pi/test1.jpg")
         camera.do_close()
         os.remove("/home/pi/test1.jpg")
@@ -18,4 +18,7 @@ class TestCamera:
             pass 
         else: 
             raise Exception("Image was not written to the USB") 
+
+    def test_capture_continuous_image(self): 
+        
 
