@@ -1,28 +1,29 @@
-from Scheduler import Scheduler
-from picamera import PiCamera
-from camera_pi import Camera_Pi
-
-# import ms5837
+import os
+import io
+import sys
+import subprocess
 import smbus
-from flask_cors import CORS
 import threading
-from flask import Flask, request, send_file, jsonify, Response
-from datetime import datetime, timedelta
+import base64
 import logging
 import json
 from uuid import uuid1
 from time import sleep, time, gmtime, strftime
-import base64
 from os import path
-import RPi.GPIO as GPIO
+from datetime import datetime, timedelta
+from flask import Flask, request, send_file, jsonify, Response
+from flask_cors import CORS
+from flask_socketio import SocketIO, send, emit
 
+from Scheduler import Scheduler
+from picamera import PiCamera
+from camera_pi import Camera_Pi
+from subsealight import PWM
+
+import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(17, GPIO.OUT)
 
-import os
-import sys
-import subprocess
-from subsealight import PWM
 
 camera_name = "OpenOceanCamera"
 camera = None
@@ -50,6 +51,7 @@ threads = []
 app = Flask("OpenOceanCam")
 app.config["CORS_HEADERS"] = "Content-Type"
 CORS(app)
+socketio = SocketIO(app, cors_allowed_origins="*", ping_timeout=5, ping_interval=5)
 
 external_drive = "/media/pi/OPENOCEANCA"
 camera_config = []
@@ -419,6 +421,7 @@ def clearLogs():
     if request.method == "GET":
         open("/home/pi/system_logs.txt", 'w').close()
         return "OK"
+
 @app.route("/turnOffWiFi", methods=["GET"])
 def turnOffWiFi():
     if request.method == "GET":
@@ -437,6 +440,7 @@ def sendTestPic():
     if request.method == "POST":
         try:
             data = request.get_json(force=True)
+            print(data)
             PWM.switch_on(data[0]["light"])
             camera.set_iso(data[0]["iso"])
             camera.set_shutter_speed(data[0]["shutter_speed"])
@@ -459,12 +463,13 @@ def sendTestPic():
             }
             sleep(2)
             PWM.switch_off()
+            print("Done")
             return jsonify(response)
         except Exception as e:
             camera.do_close()
             PWM.switch_off()
-            print(e)
-            return str(e)
+            print("Error:", e)
+            return str(e), 400
 
 
 @app.route("/testPhotoMem", methods=["POST", "GET"])
@@ -486,6 +491,7 @@ def sendTestPicMem():
                 camera.do_close()
                 camera = Camera()
                 camera.set_camera_resolution((1920, 1080))
+                
                 camera.set_camera_frame_rate(30)
 
                 filename2 = external_drive + "/" + str(uuid1()) + ".h264"
@@ -524,9 +530,68 @@ def get_video():
         stream_duration = int(time_duration)
         return "OK"
 
-def start_api_server():
-    app.run("0.0.0.0", 8000)
+device_disconnected = False
 
+@socketio.on("connect")
+def on_connect():
+    global device_disconnected
+    print("new device connected")
+
+@socketio.on("disconnect")
+def on_disconnect():
+    print("device disconnected")
+    global device_disconnected
+    device_disconnected = True
+
+livestream_running = False
+run_livestream = False
+
+@socketio.on("test_data")
+def on_test_data(data):
+    print(len(data))
+
+class StreamingOutput(object):
+    def __init__(self):
+        self.frame = None
+        self.buffer = io.BytesIO()
+
+    def write(self, buf):
+        if buf.startswith(b'\xff\xd8'):
+            # New frame, copy the existing buffer's content and notify all
+            # clients it's available
+            self.buffer.truncate()
+            self.frame = self.buffer.getvalue()
+            self.buffer.seek(0)
+        return self.buffer.write(buf)
+
+@socketio.on("livestream")
+def livestream():
+    global livestream_running
+    global device_disconnected
+    global run_livestream
+    run_livestream = True
+    device_disconnected = False
+    if livestream_running:
+        return
+    import picamera
+    with picamera.PiCamera(resolution=(640, 480)) as camera:
+        output = StreamingOutput()
+        camera.start_recording(output, format='mjpeg')
+        run_livestream = True
+        while run_livestream:
+            socketio.sleep(0)
+            emit("livestream_data", output.frame)
+    print("Closed camera")
+    livestream_running = False
+
+@socketio.on("close_livestream")
+def close_livestream():
+    global run_livestream
+    run_livestream = False
+    print("Closed livestream")
+
+def start_api_server():
+    socketio.run(app, host="0.0.0.0", port=8000)
 
 def start_sensor_reading():
     global lightSensor, temperatureSensor, pressureSensor, mstemperatureSensor, depthSensor
