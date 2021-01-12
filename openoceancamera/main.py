@@ -532,6 +532,9 @@ def get_video():
 
 device_disconnected = False
 
+livestream_running = False
+run_livestream = False
+
 @socketio.on("connect")
 def on_connect():
     global device_disconnected
@@ -542,9 +545,7 @@ def on_disconnect():
     print("device disconnected")
     global device_disconnected
     device_disconnected = True
-
-livestream_running = False
-run_livestream = False
+    run_livestream = False
 
 @socketio.on("test_data")
 def on_test_data(data):
@@ -580,7 +581,8 @@ def livestream():
         run_livestream = True
         while run_livestream:
             socketio.sleep(0)
-            emit("livestream_data", output.frame)
+            if output.frame:
+                emit("livestream_data", output.frame)
     print("Closed camera")
     livestream_running = False
 
