@@ -550,31 +550,37 @@ run_livestream = False
 def on_test_data(data):
     print(len(data))
 
+class StreamingOutput(object):
+    def __init__(self):
+        self.frame = None
+        self.buffer = io.BytesIO()
+
+    def write(self, buf):
+        if buf.startswith(b'\xff\xd8'):
+            # New frame, copy the existing buffer's content and notify all
+            # clients it's available
+            self.buffer.truncate()
+            self.frame = self.buffer.getvalue()
+            self.buffer.seek(0)
+        return self.buffer.write(buf)
+
 @socketio.on("livestream")
 def livestream():
     global livestream_running
     global device_disconnected
     global run_livestream
+    run_livestream = True
     device_disconnected = False
     if livestream_running:
         return
     import picamera
     with picamera.PiCamera(resolution=(640, 480)) as camera:
-        stream = io.BytesIO()
+        output = StreamingOutput()
+        camera.start_recording(output, format='mjpeg')
         run_livestream = True
-        for f in camera.capture_continuous(stream, format='jpeg'):
-            livestream_running = True
-            stream.truncate()
-            stream.seek(0)
+        while run_livestream:
             socketio.sleep(0)
-            frame = stream.read()
-            emit("livestream_data", frame)
-            print("sent data")
-            if device_disconnected:
-                break
-            if not run_livestream:
-                break
-            stream.seek(0)
+            emit("livestream_data", output.frame)
     print("Closed camera")
     livestream_running = False
 
