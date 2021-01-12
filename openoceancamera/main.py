@@ -554,12 +554,14 @@ def on_test_data(data):
 def livestream():
     global livestream_running
     global device_disconnected
+    global run_livestream
     device_disconnected = False
     if livestream_running:
         return
     import picamera
-    with picamera.PiCamera() as camera:
+    with picamera.PiCamera(resolution=(640, 480)) as camera:
         stream = io.BytesIO()
+        run_livestream = True
         for f in camera.capture_continuous(stream, format='jpeg'):
             livestream_running = True
             stream.truncate()
@@ -580,6 +582,7 @@ def livestream():
 def close_livestream():
     global run_livestream
     run_livestream = False
+    print("Closed livestream")
 
 def start_api_server():
     socketio.run(app, host="0.0.0.0", port=8000)
