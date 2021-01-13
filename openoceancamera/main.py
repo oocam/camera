@@ -139,7 +139,7 @@ def start_capture(video, slot):
                 PWM.switch_on(slot["light"])
                 try:
                     logger.info("Going to capture continuous capture mode")
-                    for f in camera.camera.capture_continuous(f"/media/pi/OPENOCEANCA/{camera_name}_" + 'img{timestamp:%Y-%m-%d-%H-%M-%S}.jpg'): 
+                    for f in camera.camera.capture_continuous(f"/media/pi/OPENOCEANCA/{camera_name}_" + 'img{timestamp:%Y-%m-%d-%H-%M-%S}.jpg', use_video_port=True): 
                         if thread_active:
                             PWM.switch_off()
                             sleep(camera.frequency-1)
@@ -184,6 +184,7 @@ def start_capture(video, slot):
                     if thread_active:
                         camera.camera.annotate_text = f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} @ {slot['framerate']} fps"
                         print("still recording")
+                        logger.info('still recording')
                         sensor_data = readSensorData()
                         writeSensorData(sensor_data)
                         sleep(1)
