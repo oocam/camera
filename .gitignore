@@ -7,8 +7,6 @@
 !wittypi
 !openoceancamera/
 !openoceancamera/**
-openoceancamera/system_logs.txt
-openoceancamera/test.jpg
 !ngrok
 !.github
 !.github/**
