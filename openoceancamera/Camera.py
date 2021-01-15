@@ -34,7 +34,7 @@ class Camera(object):
         else:
             try:
                 print("Going to capture in Camera")
-                self.camera.capture(filename, use_video_port=True)
+                self.camera.capture(filename)
                 print("Done capturing", filename)
             except Exception as err:
                 print(err)

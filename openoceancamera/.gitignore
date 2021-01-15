@@ -3,3 +3,6 @@
 __pycache__/
 data.json
 *.pyc
+schedule.json
+system_logs.txt
+test.jpg
