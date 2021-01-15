@@ -30,6 +30,7 @@ camera_name = "OpenOceanCamera"
 camera = None
 logging.basicConfig(filename="system_logs.txt", format="%(asctime)s - %(levelname)s - %(message)s", level=logging.INFO)
 logger = logging.getLogger('main')
+logger.setLevel(logging.DEBUG)
 
 with open("/home/pi/openoceancamera/camera_name.txt", "r") as camera_name_file:
     camera_name = camera_name_file.read()
