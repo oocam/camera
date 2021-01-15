@@ -433,7 +433,7 @@ def sendTestPic():
             logger.error(err)
             camera.do_close()
             PWM.switch_off()
-            return str(e), 400
+            return str(err), 400
 
 @app.route("/testPhotoMem", methods=["POST", "GET"])
 def sendTestPicMem():
