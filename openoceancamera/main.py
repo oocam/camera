@@ -14,9 +14,10 @@ from datetime import datetime, timedelta
 from flask import Flask, request, send_file, jsonify, Response
 from flask_cors import CORS
 from flask_socketio import SocketIO, send, emit
-
-from Scheduler import Scheduler
 from picamera import PiCamera
+
+from StreamingOutput import StreamingOutput
+from Scheduler import Scheduler
 from camera_pi import Camera_Pi
 from subsealight import PWM
 
@@ -32,7 +33,7 @@ logger = logging.getLogger('main')
 
 with open("/home/pi/openoceancamera/camera_name.txt", "r") as camera_name_file:
     camera_name = camera_name_file.read()
-print("Camera name:", camera_name)
+
 logger.info(f"Loaded camera name: {camera_name}")
 
 sys.path.append("/usr/lib/python3.5/")
@@ -43,7 +44,6 @@ cmdoff1 = "sudo service dnsmasq stop"
 try:
     from Camera import Camera
 except:
-    print("Could not initialise the camera")
     logger.error("Could not initialise camera")
 
 threads = []
@@ -110,27 +110,18 @@ def start_capture(video, slot):
     print("start capture")
     logger.info("Starting to capture")
     try:
-        print("Creating camera object")
         camera = Camera()
-        print("Created camera object")
         logger.info("Camera object initialised")
-        print(slot)
         camera.set_iso(slot["iso"])
-        print("iso set") 
         camera.set_camera_resolution((int(slot["resolution"]["x"]), int(slot["resolution"]["y"])))
-        print("camera resolution set")
         camera.set_camera_exposure_mode(slot.get("exposure_mode", "auto"))
-        print("exposure mode set") 
         camera.set_camera_exposure_compensation(int(slot.get("exposure_compensation", 0)))
-        print("exposure compensation set") 
 
         logger.info(f"Finised setting up the camera for the slot {slot}")
         try:
             if not video:
                 camera.set_capture_frequency(slot["frequency"])
-                print("capture frequency set") 
                 camera.set_shutter_speed(slot["shutter_speed"])
-                print("shutter speed set") 
                 filename = external_drive + "/" + datetime.now().strftime("%Y-%m-%d-%H-%M-%S")  + ".jpg"
                 last_file_name = filename
                 print("Capturing:")
@@ -139,12 +130,15 @@ def start_capture(video, slot):
                 PWM.switch_on(slot["light"])
                 try:
                     logger.info("Going to capture continuous capture mode")
+                    sensor_data = readSensorData()
+                    writeSensorData(sensor_data)
+                    sensor_data["camera_name"] = camera_name
+                    camera.camera.exif_tags["IFD0.ImageDescription"] = json.dumps(sensor_data)
                     for f in camera.camera.capture_continuous(f"/media/pi/OPENOCEANCA/{camera_name}_" + 'img{timestamp:%Y-%m-%d-%H-%M-%S}.jpg', use_video_port=True): 
                         if thread_active:
                             PWM.switch_off()
                             sleep(camera.frequency-1)
                             PWM.switch_on(slot["light"])
-                            print(f)
                             currenttime=datetime.now()
                             if currenttime<datetime.strptime(slot["stop"],"%Y-%m-%d-%H:%M:%S"):
                                 sensor_data = readSensorData()
@@ -167,24 +161,20 @@ def start_capture(video, slot):
 
                 #camera.do_capture(filename=filename, continuous=True, slot=slot)
                 #move camera continuous call here so that can be controlled by while loop? camera continuous seems to be like video capture- once on stays on?
-                print("Written")
                 logger.info("Finished capturing for the slot")
                 camera.do_close()
                 logger.info("Closed the camera object")
             else:
                 camera.set_camera_frame_rate(slot["framerate"])
-                print("frame rate set") 
                 filename = external_drive + "/" + camera_name + "_" + slot["start"].replace(":","-") + "_" + slot["stop"].replace(":","-") + str(slot["framerate"]) + ".h264"
                 camera.do_record(filename=filename)
                 print("Started Recording")
-                logger.info("Going to capture in video mode")
+                logger.debug("Going to capture in video mode")
                 currenttime=datetime.now()
                 PWM.switch_on(slot["light"])
                 while currenttime<datetime.strptime(slot["stop"],"%Y-%m-%d-%H:%M:%S"):
                     if thread_active:
                         camera.camera.annotate_text = f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} @ {slot['framerate']} fps"
-                        print("still recording")
-                        logger.info('still recording')
                         sensor_data = readSensorData()
                         writeSensorData(sensor_data)
                         sleep(1)
@@ -194,7 +184,7 @@ def start_capture(video, slot):
                         break
                 PWM.switch_off()
                 camera.do_close()
-            logger.info("Returing back to the main function")
+            logger.debug("Returing back to the main function")
             return filename
         except Exception as err:
             PWM.switch_off()
@@ -253,7 +243,6 @@ def main():
                             isrecord = 1
                         else:
                             if isrecord == 0:  # slot for video, has not recorded yet
-                                print("RECORDING")
                                 start_capture(True, data[slot])
                                 #with open(f"{video_filename}.txt", 'w') as logFile:
                                 #    logFile.write(f"Start time: {data[slot]['start']}\nEnd time: {data[slot]['stop']}\n")
@@ -312,23 +301,11 @@ def update_config():
     pass
 
 def restart_code():
-    #next_reboot = (datetime.now() + timedelta(seconds=30)).strftime("%d %H:%M:%S")
-    #sleeptime = datetime.now().strftime("%d %H:%M")
-    #reboot_command = 'sudo sh /home/pi/openoceancamera/wittypi/wittycam.sh 5 "' + next_reboot + '"'
-    #shutdown_cmd = 'sudo sh /home/pi/openoceancamera/wittypi/wittycam.sh 4 "' + sleeptime + '"'
-    #os.system(reboot_command)
-    #os.system(shutdown_cmd)
     os.system("sudo reboot")
 
 def reboot_camera():
-    #next_reboot = (datetime.now() + timedelta(minutes=6)).strftime("%d %H:%M:%S")
-    #sleeptime = (datetime.now() + timedelta(minutes=5)).strftime("%d %H:%M")
-    #reboot_command = 'sudo sh /home/pi/openoceancamera/wittypi/wittycam.sh 5 "' + next_reboot + '"'
-    #shutdown_cmd = 'sudo sh /home/pi/openoceancamera/wittypi/wittycam.sh 4 "' + sleeptime + '"'
-    #os.system(reboot_command)
-    #os.system(shutdown_cmd)
     sleep(300)
-    restart_code()
+    os.system("sudo reboot")
 
 @app.route("/setCameraName", methods=["POST"])
 def set_camera_name():
@@ -343,19 +320,21 @@ def set_camera_name():
 def sync_time():
     global thread_active
     if request.method == "POST":
-        data = request.get_json()
-        print(data)
-        date_input = data["date"]
-        timezone = data["timezone"]
-        clear_cmd = ('sudo sh /home/pi/openoceancamera/wittypi/wittycam.sh 10 6')
-        os.system(clear_cmd)
-        os.system(f"sudo timedatectl set-timezone {timezone}")
-        os.system(f"sudo date -s '{date_input}'")
-        # Save the system time to RTC -
-        os.system("sudo sh /home/pi/openoceancamera/wittypi/wittycam.sh 1")
-        os.system("sudo sh /home/pi/openoceancamera/wittypi/wittycam.sh 2")
-        threading.Thread(target=restart_code).start()
-        return "OK" 
+        try:
+            data = request.get_json()
+            date_input = data["date"]
+            timezone = data["timezone"]
+            clear_cmd = ('sudo sh /home/pi/openoceancamera/wittypi/wittycam.sh 10 6')
+            os.system(clear_cmd)
+            os.system(f"sudo timedatectl set-timezone {timezone}")
+            os.system(f"sudo date -s '{date_input}'")
+            # Save the system time to RTC -
+            os.system("sudo sh /home/pi/openoceancamera/wittypi/wittycam.sh 1")
+            os.system("sudo sh /home/pi/openoceancamera/wittypi/wittycam.sh 2")
+            threading.Thread(target=restart_code).start()
+            return "OK", 200
+        except Exception as err:
+            return str(err), 400
 
 @app.route("/setSchedule", methods=["POST", "GET"])
 def app_connect():
@@ -380,18 +359,14 @@ def app_connect():
         # Save the system time to RTC -
         os.system("sudo sh /home/pi/openoceancamera/wittypi/wittycam.sh 1")
         os.system("sudo sh /home/pi/openoceancamera/wittypi/wittycam.sh 2")
-        external_drive = "/media/pi/OPENOCEANCA"
         pathv = path.exists(external_drive)
         threading.Thread(target=restart_code).start()
         if pathv:
             thread_active = True
-            return {
-                "success": "Success",
-            }
+            return "OK", 200
         else:
-            return {
-                "success": "Not a Success. No Memory called OPENOCEANCA inserted.",
-            }
+            logger.error("Error: USB storage device not mounted")
+            return "Error: USB storage device not mounted", 400
 
 @app.route("/viewConfig", methods=["GET"])
 def returnConfig():
@@ -403,37 +378,30 @@ def returnConfig():
                 "config": json.dumps(camera_config),
                 "camera_name": camera_name
             }
-            print (response)
-            return response
+            return response, 200
         else:
-            return {
-                "error": "No Configuration exists",
-            }
+            logger.debug("No configuration exists on the camera")
+            return "No configuration exists on the camera", 200
 
 @app.route("/getLogs", methods=["GET"])
 def getLogs():
     if request.method == "GET":
-        with open("/home/pi/system_logs.txt", 'r') as f:
-            data = f.read()
-            return data
+        try:
+            with open("/home/pi/system_logs.txt", 'r') as f:
+                data = f.read()
+                return data
+        except Exception as err:
+            logger.error(err)
+            return str(err), 400
 
 @app.route("/clearLogs", methods=["GET"])
 def clearLogs():
     if request.method == "GET":
-        open("/home/pi/system_logs.txt", 'w').close()
-        return "OK"
-
-@app.route("/turnOffWiFi", methods=["GET"])
-def turnOffWiFi():
-    if request.method == "GET":
-        os.system(cmdoff)
-        os.system(cmdoff1)
-        sys.exit()
-        print("Wi-FI Off")
-        return {
-            "success": "Success",
-        }
-
+        try:
+            open("/home/pi/system_logs.txt", 'w').close()
+            return "OK", 200
+        except Exception as err:
+            return str(err), 400
 
 @app.route("/testPhoto", methods=["POST", "GET"])
 def sendTestPic():
@@ -446,9 +414,7 @@ def sendTestPic():
             camera.set_iso(data[0]["iso"])
             camera.set_shutter_speed(data[0]["shutter_speed"])
             camera.set_camera_exposure_mode(data[0].get("exposure_mode", 'auto'))
-            print(camera.camera.exposure_mode)
             camera.set_camera_exposure_compensation(int(data[0].get("exposure_compensation", 0)))
-            print(camera.camera.exposure_compensation)
             if data[0].get("resolution", None):
                 camera.set_camera_resolution((int(data[0]["resolution"].get("x", 1920)), int(data[0]["resolution"].get("y", 1080))))
 
@@ -457,61 +423,53 @@ def sendTestPic():
                 img_base64 = base64.b64encode(image.read())
             camera.do_close()
             sensor_data = readSensorData()
-            print(f"Read sensor data: {sensor_data}")
             response = {
                 "image": img_base64.decode("utf-8"),
                 "sensors": json.dumps(sensor_data),
             }
-            sleep(2)
             PWM.switch_off()
-            print("Done")
-            return jsonify(response)
-        except Exception as e:
+            return jsonify(response), 200
+        except Exception as err:
+            logger.error(err)
             camera.do_close()
             PWM.switch_off()
-            print("Error:", e)
             return str(e), 400
-
 
 @app.route("/testPhotoMem", methods=["POST", "GET"])
 def sendTestPicMem():
     if request.method == "POST":
-        camera = Camera()
         data = request.get_json(force=True)
         PWM.switch_on(data[0]["light"])
-        camera.set_iso(data[0]["iso"])
-        camera.set_shutter_speed(data[0]["shutter_speed"])
         flag = "SUCCESS"
-        external_drive = "/media/pi/OPENOCEANCA"
         pathv = path.exists(external_drive)
         if pathv:
             try:
+                camera = Camera()
+                camera.set_iso(data[0]["iso"])
+                camera.set_shutter_speed(data[0]["shutter_speed"])
                 filename1 = external_drive + "/" + str(uuid1()) + ".jpg"
                 camera.do_capture(filename=filename1)
                 print("Written")
                 camera.do_close()
-                camera = Camera()
-                camera.set_camera_resolution((1920, 1080))
-                
-                camera.set_camera_frame_rate(30)
 
+                camera = Camera()
+                camera.set_camera_resolution((1920, 1080))                
+                camera.set_camera_frame_rate(30)
                 filename2 = external_drive + "/" + str(uuid1()) + ".h264"
                 camera.do_record(filename=filename2)
                 print("Started recording")
                 sleep(3)
-            except Exception as e:
-                flag = str(e)
+                camera.do_close()
+            except Exception as err:
+                return str(err), 400
         else:
-            flag = "USB Storage with name OPENOCEANCA required"
-
-        camera.do_close()
+            return "USB storage device with name OOCAM required", 400
         PWM.switch_off()
         sensor_data = readSensorData()
         response = {
-            "flag": flag,
             "sensors": json.dumps(sensor_data),
         }
-        return response
+        return jsonify(response), 200
 
 
 def gen(camera):
@@ -531,67 +489,46 @@ def get_video():
         stream_duration = int(time_duration)
         return "OK"
 
-device_disconnected = False
-
 livestream_running = False
 run_livestream = False
 
 @socketio.on("connect")
 def on_connect():
-    global device_disconnected
-    print("new device connected")
+    logger.debug("new device connected")
 
 @socketio.on("disconnect")
 def on_disconnect():
-    print("device disconnected")
-    global device_disconnected
-    device_disconnected = True
+    logger.debug("device disconnected")
     run_livestream = False
-
-@socketio.on("test_data")
-def on_test_data(data):
-    print(len(data))
-
-class StreamingOutput(object):
-    def __init__(self):
-        self.frame = None
-        self.buffer = io.BytesIO()
-
-    def write(self, buf):
-        if buf.startswith(b'\xff\xd8'):
-            # New frame, copy the existing buffer's content and notify all
-            # clients it's available
-            self.buffer.truncate()
-            self.frame = self.buffer.getvalue()
-            self.buffer.seek(0)
-        return self.buffer.write(buf)
 
 @socketio.on("livestream")
 def livestream():
     global livestream_running
-    global device_disconnected
     global run_livestream
     run_livestream = True
-    device_disconnected = False
     if livestream_running:
         return
-    import picamera
-    with picamera.PiCamera(resolution=(640, 480)) as camera:
-        output = StreamingOutput()
-        camera.start_recording(output, format='mjpeg')
-        run_livestream = True
-        while run_livestream:
-            socketio.sleep(0)
-            if output.frame:
-                emit("livestream_data", output.frame)
-    print("Closed camera")
+    try:
+        with PiCamera(resolution=(640, 480)) as camera:
+            output = StreamingOutput()
+            logger.debug("Starting livestream")
+            camera.start_recording(output, format='mjpeg')
+            run_livestream = True
+            while run_livestream:
+                socketio.sleep(0)
+                if output.frame:
+                    emit("livestream_data", output.frame)
+    except Exception as err:
+        emit("livestream_data", json.dumps({"error": err}))
+        logger.error(err)
     livestream_running = False
+    logger.debug("Closed livestream")
 
 @socketio.on("close_livestream")
 def close_livestream():
     global run_livestream
     run_livestream = False
-    print("Closed livestream")
+    logger.debug("Closed livestream")
 
 def start_api_server():
     socketio.run(app, host="0.0.0.0", port=8000)
