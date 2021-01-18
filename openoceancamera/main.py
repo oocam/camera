@@ -302,6 +302,7 @@ def update_config():
     pass
 
 def restart_code():
+    sleep(5)
     os.system("sudo reboot")
 
 def reboot_camera():
