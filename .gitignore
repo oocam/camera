@@ -3,6 +3,8 @@
 !README.md
 !run.sh
 !switch_ap.sh
+!connect_to_wifi.sh
+!update.sh
 !schedule.json
 !wittypi
 !openoceancamera/
