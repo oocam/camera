@@ -500,6 +500,7 @@ def on_connect():
 
 @socketio.on("disconnect")
 def on_disconnect():
+    global run_livestream
     logger.debug("device disconnected")
     run_livestream = False
 
