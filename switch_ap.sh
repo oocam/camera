@@ -19,6 +19,7 @@ if [[ "$(hostname -I)" =~ "192.168.5.1" ]]; then
 	sudo systemctl stop hostapd
 	sudo systemctl disable hostapd  
 	sudo systemctl mask hostapd  
+	echo "Restarting services"
 	sudo systemctl restart dnsmasq
 	sudo systemctl restart dhcpcd 
 else

@@ -491,6 +491,20 @@ def get_video():
         stream_duration = int(time_duration)
         return "OK"
 
+@app.route("/update", methods=["GET","POST"])
+def update_code(): 
+    if request.method == "POST": 
+        try: 
+            data = request.get_json() 
+            ssid = data["ssid"]
+            psk = data["psk"]
+            os.system(f"sudo sh /home/pi/connect_to_wifi.sh {ssid} {psk}")
+            os.system("sudo sh /home/pi/update.sh")
+            return "OK" , 200
+        except Exception as err: 
+            logger.error(f"Error: {err}")
+            return str(err) , 400 
+
 livestream_running = False
 run_livestream = False
 
