@@ -342,7 +342,7 @@ def sync_time():
 def clearSchedule():
     try:
         with open("/home/pi/openoceancamera/schedule.json", "w") as outfile:
-            json.dump(json.loads([]), outfile)
+            json.dump(json.loads("[]"), outfile)
         threading.Thread(target=restart_code).start()
         return "OK", 200
     except Exception as err:
