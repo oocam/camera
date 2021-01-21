@@ -338,6 +338,16 @@ def sync_time():
         except Exception as err:
             return str(err), 400
 
+@app.route("/clearSchedule", methods=["GET"])
+def clearSchedule():
+    try:
+        with open("/home/pi/openoceancamera/schedule.json", "w") as outfile:
+            json.dump(json.loads([]), outfile)
+        threading.Thread(target=restart_code).start()
+        return "OK", 200
+    except Exception as err:
+        return str(err), 400
+
 @app.route("/setSchedule", methods=["POST", "GET"])
 def app_connect():
     global external_drive
