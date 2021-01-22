@@ -117,7 +117,7 @@ def start_capture(video, slot):
     try:
         camera = Camera()
         logger.info("Camera object initialised")
-        camera.set_iso(slot.get("iso"), 0)
+        camera.set_iso(slot.get("iso", 0))
         camera.set_camera_resolution((int(slot["resolution"]["x"]), int(slot["resolution"]["y"])))
         camera.set_camera_exposure_mode(slot.get("exposure_mode", "auto"))
         camera.set_camera_exposure_compensation(int(slot.get("exposure_compensation", 0)))
