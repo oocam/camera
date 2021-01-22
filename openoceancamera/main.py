@@ -32,8 +32,12 @@ logging.basicConfig(filename="system_logs.txt", format="%(asctime)s - %(levelnam
 logger = logging.getLogger('main')
 logger.setLevel(logging.DEBUG)
 
-with open("/home/pi/openoceancamera/camera_name.txt", "r") as camera_name_file:
-    camera_name = camera_name_file.read()
+try:
+    with open("/home/pi/openoceancamera/camera_name.txt", "r") as camera_name_file:
+        camera_name = camera_name_file.read()
+except Exception as err:
+    with open("/home/pi/openoceancamera/camera_name.txt", "w") as camera_name_file:
+        camera_name_file.write(camera_name)
 
 logger.info(f"Loaded camera name: {camera_name}")
 
