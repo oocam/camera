@@ -117,16 +117,15 @@ def start_capture(video, slot):
     try:
         camera = Camera()
         logger.info("Camera object initialised")
-        camera.set_iso(slot["iso"])
+        camera.set_iso(slot.get("iso"), 0)
         camera.set_camera_resolution((int(slot["resolution"]["x"]), int(slot["resolution"]["y"])))
         camera.set_camera_exposure_mode(slot.get("exposure_mode", "auto"))
         camera.set_camera_exposure_compensation(int(slot.get("exposure_compensation", 0)))
-
+        camera.set_shutter_speed(slot.get("shutter_speed", 0))
         logger.info(f"Finised setting up the camera for the slot {slot}")
         try:
             if not video:
                 camera.set_capture_frequency(slot["frequency"])
-                camera.set_shutter_speed(slot["shutter_speed"])
                 filename = external_drive + "/" + datetime.now().strftime("%Y-%m-%d-%H-%M-%S")  + ".jpg"
                 last_file_name = filename
                 print("Capturing:")
