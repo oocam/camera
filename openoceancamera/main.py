@@ -383,7 +383,7 @@ def app_connect():
 @app.route("/viewConfig", methods=["GET"])
 def returnConfig():
     if request.method == "GET":
-        if camera_config != []:
+        try:
             response = {
                 "local_time": datetime.now().strftime("%d-%B-%Y %H:%M:%S"),
                 "local_timezone": str(datetime.utcnow().astimezone().tzinfo) ,
@@ -391,9 +391,9 @@ def returnConfig():
                 "camera_name": camera_name
             }
             return response, 200
-        else:
-            logger.debug("No configuration exists on the camera")
-            return "No configuration exists on the camera", 200
+        except Exception as err:
+            logger.error(err)
+            return str(err), 400
 
 @app.route("/getLogs", methods=["GET"])
 def getLogs():
