@@ -314,7 +314,7 @@ def set_camera_name():
     global camera_name
     if request.method == 'POST':
         camera_name = request.get_json()["name"]
-        with open("camera_name.txt", "w") as camera_name_file:
+        with open("/home/pi/openoceancamera/camera_name.txt", "w") as camera_name_file:
             camera_name_file.write(camera_name)
     return camera_name
 
