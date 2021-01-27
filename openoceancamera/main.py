@@ -402,9 +402,11 @@ def returnConfig():
 def getLogs():
     if request.method == "GET":
         try:
+            lines = request.args.get("lines")
             with open("/home/pi/system_logs.txt", 'r') as f:
                 data = f.read()
-                return data
+                logs = data.split('\n')
+                return logs[:lines]
         except Exception as err:
             logger.error(err)
             return str(err), 400
