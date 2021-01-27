@@ -346,6 +346,8 @@ def clearSchedule():
     try:
         with open("/home/pi/openoceancamera/schedule.json", "w") as outfile:
             json.dump(json.loads("[]"), outfile)
+        clear_cmd = ('sudo sh /home/pi/openoceancamera/wittypi/wittycam.sh 10 6')
+        os.system(clear_cmd)
         threading.Thread(target=restart_code).start()
         return "OK", 200
     except Exception as err:
@@ -360,28 +362,36 @@ def app_connect():
         thread_active = False
         print(request.get_json())
         camera_config = request.get_json()
-        with open("/home/pi/openoceancamera/schedule.json", "w") as outfile:
-            json.dump(camera_config, outfile)
-        date_input = camera_config[0]["date"]
-        timezone = camera_config[0]["timezone"]
-        clear_cmd = ('sudo sh /home/pi/openoceancamera/wittypi/wittycam.sh 10 6')
-        os.system(clear_cmd)
-        os.system(f"sudo timedatectl set-timezone {timezone}")
-        print(timezone)
-        print(date_input)
-        # Sets the system time to the user's phone time
-        os.system(f"sudo date -s '{date_input}'")
-        # Save the system time to RTC -
-        os.system("sudo sh /home/pi/openoceancamera/wittypi/wittycam.sh 1")
-        os.system("sudo sh /home/pi/openoceancamera/wittypi/wittycam.sh 2")
-        pathv = path.exists(external_drive)
-        threading.Thread(target=restart_code).start()
-        if pathv:
-            thread_active = True
-            return "OK", 200
-        else:
-            logger.error("Error: USB storage device not mounted")
-            return "Error: USB storage device not mounted", 400
+        try: 
+            with open("/home/pi/openoceancamera/schedule.json", "w") as outfile:
+                json.dump(camera_config, outfile)
+            date_input = camera_config[0]["date"]
+            timezone = camera_config[0]["timezone"]
+            try: 
+                clear_cmd = ('sudo sh /home/pi/openoceancamera/wittypi/wittycam.sh 10 6')
+                os.system(clear_cmd)
+                os.system(f"sudo timedatectl set-timezone {timezone}")
+                print(timezone)
+                print(date_input)
+                # Sets the system time to the user's phone time
+                os.system(f"sudo date -s '{date_input}'")
+                # Save the system time to RTC -
+                os.system("sudo sh /home/pi/openoceancamera/wittypi/wittycam.sh 1")
+                os.system("sudo sh /home/pi/openoceancamera/wittypi/wittycam.sh 2")
+                pathv = path.exists(external_drive)
+                threading.Thread(target=restart_code).start()
+                if pathv:
+                    thread_active = True
+                    return "OK", 200
+                else:
+                    logger.error("Error: USB storage device not mounted")
+                    return "Error: USB storage device not mounted", 400
+            except Exception as err: 
+                logger.error(err)
+                return str(err), 400
+        except Exception as err: 
+            logger.error(err)
+            return "Schedule could not be set", 400
 
 @app.route("/viewConfig", methods=["GET"])
 def returnConfig():
