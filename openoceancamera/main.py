@@ -402,7 +402,7 @@ def returnConfig():
 def getLogs():
     if request.method == "GET":
         try:
-            lines = int(request.args.get("lines"))
+            lines = int(request.args.get("lines")) + 1 
             with open("/home/pi/system_logs.txt", 'r') as f:
                 data = f.read()
                 logs = data.split('\n')
