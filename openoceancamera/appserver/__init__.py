@@ -56,6 +56,8 @@ def clearSchedule():
     try:
         with open("/home/pi/openoceancamera/schedule.json", "w") as outfile:
             json.dump(json.loads("[]"), outfile)
+        clear_cmd = ('sudo sh /home/pi/openoceancamera/wittypi/wittycam.sh 10 6')
+        os.system(clear_cmd)
         threading.Thread(target=restart_code).start()
         return "OK", 200
     except Exception as err:
