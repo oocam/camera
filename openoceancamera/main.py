@@ -525,7 +525,7 @@ def update_code():
             ssid = data["ssid"]
             psk = data["psk"]
             os.system(f"sudo bash /home/pi/connect_to_wifi.sh {ssid} {psk}")
-            os.system("sudo bash /home/pi/update.sh")
+            os.system("sudo bash /home/pi/update.sh >> /home/pi/system_logs.txt")
             return "OK" , 200
         except Exception as err: 
             logger.error(f"Error: {err}")
