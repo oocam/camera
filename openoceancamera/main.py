@@ -524,8 +524,8 @@ def update_code():
             data = request.get_json() 
             ssid = data["ssid"]
             psk = data["psk"]
-            os.system(f"sudo sh /home/pi/connect_to_wifi.sh {ssid} {psk}")
-            os.system("sudo sh /home/pi/update.sh")
+            os.system(f"sudo bash /home/pi/connect_to_wifi.sh {ssid} {psk}")
+            os.system("sudo bash /home/pi/update.sh")
             return "OK" , 200
         except Exception as err: 
             logger.error(f"Error: {err}")
