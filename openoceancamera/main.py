@@ -518,7 +518,7 @@ def get_video():
         return "OK"
 
 def pull_updated_code(): 
-    os.system("sudo bash /home/pi/update.sh >> /home/pi/system_logs.txt 2>&1")
+    os.system("bash /home/pi/update.sh >> /home/pi/system_logs.txt 2>&1")
 
 @app.route("/update", methods=["GET","POST"])
 def update_code(): 
@@ -527,7 +527,7 @@ def update_code():
             data = request.get_json() 
             ssid = data["ssid"]
             psk = data["psk"]
-            os.system(f"sudo bash /home/pi/connect_to_wifi.sh {ssid} {psk}")
+            os.system(f"bash /home/pi/connect_to_wifi.sh {ssid} {psk}")
             threading.Thread(target=pull_updated_code).start()
             return "OK" , 200
         except Exception as err: 
