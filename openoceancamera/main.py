@@ -507,7 +507,7 @@ def update_code():
             data = request.get_json() 
             ssid = data["ssid"]
             psk = data["psk"]
-            os.system(f"bash /home/pi/connect_to_wifi.sh {ssid} {psk}")
+            os.system(f"sudo bash /home/pi/connect_to_wifi.sh {ssid} {psk}")
             threading.Thread(target=pull_updated_code).start()
             return "OK" , 200
         except Exception as err: 
