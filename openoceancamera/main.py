@@ -249,11 +249,9 @@ def main():
                         print(f"We have {mins_to_next_slot} mins to next slot")
                         if (mins_to_next_slot > 10) and slot == -1:
                             logger.info("Camera is going to prepare to go to sleep")
-                            five_mins = timedelta(minutes=2)
-                            one_mins = timedelta(minutes=2)
-                            sleeptime = datetime.now() + one_mins
+                            sleeptime = datetime.now() + timedelta(minutes=2)
+                            next_reboot = next_slot["start"] - timedelta(minutes=2)
                             sleeptime = sleeptime.strftime("%d %H:%M")
-                            next_reboot = next_slot["start"] - five_mins
                             print(f"I will wake up at {next_reboot}")
                             logger.info(f"The reboot time has been set to {next_reboot}")
                             next_reboot = next_reboot.strftime("%d %H:%M:%S")
@@ -451,6 +449,7 @@ def sendTestPicMem():
         flag = "SUCCESS"
         pathv = path.exists(external_drive)
         if pathv:
+            camera = None
             try:
                 camera = Camera()
                 camera.set_iso(data[0]["iso"])
@@ -469,7 +468,8 @@ def sendTestPicMem():
                 sleep(3)
                 camera.do_close()
             except Exception as err:
-                return str(err), 400
+                camera.do_close()
+                return "Please check if the USB storage device is connected properly", 400
         else:
             return "USB storage device with name OOCAM required", 400
         PWM.switch_off()
