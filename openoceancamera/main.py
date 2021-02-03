@@ -503,7 +503,8 @@ def pull_updated_code():
 @app.route("/update", methods=["GET","POST"])
 def update_code(): 
     if request.method == "POST": 
-        try: 
+        try:
+            os.system("sudo sh /home/pi/openoceancamera/wittypi/wittycam.sh 10 6") 
             data = request.get_json() 
             ssid = data["ssid"]
             psk = data["psk"]
