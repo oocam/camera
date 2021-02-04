@@ -249,7 +249,7 @@ def main():
                         print(f"We have {mins_to_next_slot} mins to next slot")
                         if (mins_to_next_slot > 10) and slot == -1:
                             logger.info("Camera is going to prepare to go to sleep")
-                            sleeptime = datetime.now() + timedelta(minutes=2)
+                            sleeptime = datetime.now() + timedelta(minutes=5)
                             next_reboot = next_slot["start"] - timedelta(minutes=2)
                             sleeptime = sleeptime.strftime("%d %H:%M")
                             print(f"I will wake up at {next_reboot}")
