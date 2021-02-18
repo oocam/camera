@@ -13,9 +13,9 @@ from sensors import Sensor
 from Scheduler import Scheduler
 
 from appserver import start_api_server
+
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(17, GPIO.OUT)
 
 if __name__ == "__main__":
     api_thread = threading.Thread(target=start_api_server)
