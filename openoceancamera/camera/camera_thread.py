@@ -6,7 +6,6 @@ from datetime import datetime, timedelta
 import os 
 from logger import logger
 
-
 def camera_thread():
     # load the schedule from the schedule json
     camera_schedule = Scheduler()

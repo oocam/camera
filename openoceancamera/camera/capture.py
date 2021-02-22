@@ -9,6 +9,7 @@ from logger import logger
 from subsealight import PWM
 from restart import reboot_camera
 from .utils import get_camera_name
+from wiper import run_wiper
 
 def capture_video(slot):
     resolution = slot["resolution"]
@@ -23,6 +24,9 @@ def capture_video(slot):
     except Exception as err: 
         logger.error(err)
     camera_name = get_camera_name()
+    wiper_status = slot.get("wiper", false)
+    if wiper:
+        run_wiper(3)
     try: 
         with PiCamera(resolution=resolution, framerate=framerate) as camera:
             camera.iso = iso 
@@ -64,6 +68,9 @@ def capture_images(slot):
         except Exception as err: 
             logger.error(err)
         camera_name = get_camera_name()
+        wiper_status = slot.get("wiper", false)
+        if wiper: 
+            run_wiper(3)
         logger.debug(f"Assigning camera config to {camera_name}")
         try: 
             with PiCamera(resolution=resolution) as camera:
