@@ -8,6 +8,7 @@ SERVO_UPPER_LIMIT=250
 class Wiper:
     def __init__(self, pin):
         self.PIN = pin
+        os.system(f"gpio -g mode {pin} pwm")
         os.system("gpio pwm-ms")
         os.system("gpio pwmc 192")
         os.system("gpio pwmr 2000")
