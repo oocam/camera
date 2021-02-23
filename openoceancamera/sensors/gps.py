@@ -18,16 +18,14 @@ def get_gps_data():
         except:
             continue
         if data is not None: 
-            data_string = "".join([chr(b) for b in data]) 
             if gps.has_fix:
-                print("Fixed")
+                print(gps.latitude, gps.longitude, gps.fix_quality)
             else:
-                if time.monotonic() - timestamp > 5:
-                    print(data.decode())
-                    print("satellites", gps.satellites)
+                pass
         if time.monotonic() - timestamp > 5: 
             gps.send_command(b"PMTK605") 
             timestamp = time.monotonic() 
+        gps.update()
 
 if __name__ == "__main__":
     get_gps_data() 
