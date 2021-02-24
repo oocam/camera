@@ -10,8 +10,8 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 CREDENTIAL_STORE = os.path.join(os.environ["HOME"], ".oocam", "credentials")
-APP_KEY="gdtj4idhw0x7uin"
-APP_SECRET="rycg2v1h3gjcx4b"
+APP_KEY=os.environ.get(["DROPBOX_KEY"], "")
+APP_SECRET=os.environ.get(["DROPBOX_SECRET"], "")
 
 def load_credentials_file():
     if os.path.exists(CREDENTIAL_STORE):
