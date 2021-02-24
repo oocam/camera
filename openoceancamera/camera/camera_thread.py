@@ -2,7 +2,7 @@ from Scheduler import Scheduler
 from subsealight import PWM
 import json 
 from .capture import start_capture
-from .upload import start_upload()
+from .upload import start_upload
 from datetime import datetime, timedelta
 import os
 from logger import logger
