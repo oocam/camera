@@ -1,31 +1,31 @@
 import time 
+import threading
 import board 
 import busio  
-import adafruit_gps 
+import adafruit_gps
+from adafruit_gps import GPS_GtopI2C
 
-i2c = board.I2C() 
+class GPS(GPS_GtopI2C):
+    def __init__(self):
+        super().__init__(self, board.I2C())
+        self.send_command(b"PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0")
+        self.send_command(b"PMTK220,1000")
+        threading.Timer(1, self.update).start()
+        threading.Timer(5, self.request_firmware).start()
 
-gps = adafruit_gps.GPS_GtopI2C(i2c) 
+    def request_firmware(self):
+        self.send_command(b"PMTK605")
+        threading.Timer(5, self.request_firmware).start()
 
-gps.send_command(b"PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0")
-gps.send_command(b"PMTK220,1000") 
+    def update(self):
+        super().update()
+        threading.Timer(1, self.update).start()
 
-def get_gps_data(): 
-    timestamp = time.monotonic() 
-    while True: 
-        try:
-            data = gps.read(32) 
-        except:
-            continue
-        if data is not None: 
-            if gps.has_fix:
-                print(gps.latitude, gps.longitude, gps.fix_quality)
-            else:
-                pass
-        if time.monotonic() - timestamp > 5: 
-            gps.send_command(b"PMTK605") 
-            timestamp = time.monotonic() 
-        gps.update()
 
 if __name__ == "__main__":
-    get_gps_data() 
+    gps = GPS()
+    while not gps.has_fix:
+        continue
+    print("GPS fixed")
+    while gps.has_fix:
+        print(f"{gps.latitude}, {gps.longitude}")

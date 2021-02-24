@@ -9,6 +9,7 @@ from constants import LOG_FILE
 from .ms5837 import MS5837_30BA, DENSITY_SALTWATER, UNITS_Centigrade, UNITS_mbar
 from .tsys01 import TSYS01_30BA, UNITS_Centigrade
 from .tsl2561 import TSL2561_30BA
+from .gps import GPS
 
 
 class Sensor:
@@ -22,6 +23,7 @@ class Sensor:
             self.PressureSensor = PressureSensor() 
             self.TemperatureSensor = TemperatureSensor() 
             self.LuminositySensor = LuminositySensor() 
+            self.gps = GPS()
         except Exception as err: 
             logger.error(f"Sensor Error: {err}")
         
@@ -40,6 +42,10 @@ class Sensor:
                             "luminosity": self.luminosity_data,
                             "temp": self.temperature_data,
                             "pressure": self.pressure_data,
+                            "gps": {
+                              "lat": self.gps.latitude,
+                              "long": self.gps.longitude
+                            }
                         }
                     )
                 )
@@ -64,13 +70,17 @@ class Sensor:
             logger.error(f"Error: {err}")
         except Exception as err: 
             logger.error(f"Sensor error: {err}")
-            pass 
+            pass
     
     def get_sensor_data(self): 
         return { 
             "pressure": self.pressure_data, 
             "temperature" : self.temperature_data, 
-            "luminosity" : self.luminosity_data
+            "luminosity" : self.luminosity_data,
+            "gps": {
+              "lat": self.gps.latitude,
+              "long": self.gps.longitude
+            }
         }
 
 class PressureSensorNotConnectedException(Exception):
@@ -91,7 +101,6 @@ class PressureSensor(MS5837_30BA):
             raise PressureSensorNotConnectedException(
                 "MS5837_30BA may not be connected"
             )
-
         self.setFluidDensity(DENSITY_SALTWATER)
 
     def pressure(self, conversion=UNITS_mbar):

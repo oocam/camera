@@ -2,8 +2,9 @@ from Scheduler import Scheduler
 from subsealight import PWM
 import json 
 from .capture import start_capture
+from .upload import start_upload()
 from datetime import datetime, timedelta
-import os 
+import os
 from logger import logger
 
 def camera_thread():
@@ -25,7 +26,10 @@ def camera_thread():
         # if it needs to run, call the correct function to start the slot (photo/video)
         if (slot_index >= 0):
             slot = camera_schedule.get_slot(slot_index)
-            start_capture(slot)
+            if(slot.get("upload", False)):
+                start_upload(slot)
+            else:
+                start_capture(slot)
         # else check when the next schedule is
         next_slot = camera_schedule.next_future_timeslot()
         slot_index = camera_schedule.should_start()
