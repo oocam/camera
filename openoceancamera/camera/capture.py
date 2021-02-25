@@ -27,7 +27,7 @@ def capture_video(slot):
     wiper_status = slot["wiper"]
     if wiper_status:
         run_wiper(3)
-    try: 
+    try:
         with PiCamera(resolution=resolution, framerate=framerate) as camera:
             camera.iso = iso 
             camera.exposure_mode = exposure_mode 

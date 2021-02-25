@@ -19,11 +19,21 @@ class Sensor:
         self.temperature_data = -1
         self.luminosity_data = -1
         self.log_filename = LOG_FILE
+
         try:
-            self.PressureSensor = PressureSensor() 
-            self.TemperatureSensor = TemperatureSensor() 
-            self.LuminositySensor = LuminositySensor() 
             self.gps = GPS()
+        except Exception as err: 
+            logger.error(f"Sensor Error: {err}")
+        try:
+            self.PressureSensor = PressureSensor()
+        except Exception as err: 
+            logger.error(f"Sensor Error: {err}")
+        try:
+            self.TemperatureSensor = TemperatureSensor() 
+        except Exception as err: 
+            logger.error(f"Sensor Error: {err}")
+        try:
+            self.LuminositySensor = LuminositySensor() 
         except Exception as err: 
             logger.error(f"Sensor Error: {err}")
         
@@ -80,7 +90,7 @@ class Sensor:
             "gps": {
               "lat": self.gps.latitude,
               "long": self.gps.longitude
-            }
+            } if self.gps else None
         }
 
 class PressureSensorNotConnectedException(Exception):
