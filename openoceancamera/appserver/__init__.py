@@ -249,7 +249,7 @@ def finish_dropbox_auth(data):
     emit("dropbox_auth_complete", user_details.email)
 
 @socketio.on("dropbox_auth_get_user")
-def get_auth_user(data):
+def get_auth_user():
     dbx = DropboxUploader()
     user_details = dbx.get_user_details()
     if user_details:
