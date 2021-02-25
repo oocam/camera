@@ -24,7 +24,7 @@ def capture_video(slot):
     except Exception as err: 
         logger.error(err)
     camera_name = get_camera_name()
-    wiper_status = slot.get("wiper", false)
+    wiper_status = slot["wiper"]
     if wiper:
         run_wiper(3)
     try: 
@@ -68,7 +68,7 @@ def capture_images(slot):
         except Exception as err: 
             logger.error(err)
         camera_name = get_camera_name()
-        wiper_status = slot.get("wiper", false)
+        wiper_status = slot.get("wiper", False)
         if wiper: 
             run_wiper(3)
         logger.debug(f"Assigning camera config to {camera_name}")

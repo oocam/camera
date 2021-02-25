@@ -26,7 +26,7 @@ def camera_thread():
         # if it needs to run, call the correct function to start the slot (photo/video)
         if (slot_index >= 0):
             slot = camera_schedule.get_slot(slot_index)
-            if(slot.get("upload", False)):
+            if(slot["upload"]):
                 start_upload(slot)
             else:
                 start_capture(slot)
