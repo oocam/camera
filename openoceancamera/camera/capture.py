@@ -25,7 +25,7 @@ def capture_video(slot):
         logger.error(err)
     camera_name = get_camera_name()
     wiper_status = slot["wiper"]
-    if wiper:
+    if wiper_status:
         run_wiper(3)
     try: 
         with PiCamera(resolution=resolution, framerate=framerate) as camera:
@@ -69,7 +69,7 @@ def capture_images(slot):
             logger.error(err)
         camera_name = get_camera_name()
         wiper_status = slot.get("wiper", False)
-        if wiper: 
+        if wiper_status: 
             run_wiper(3)
         logger.debug(f"Assigning camera config to {camera_name}")
         try: 
