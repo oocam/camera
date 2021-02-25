@@ -31,7 +31,8 @@ class DropboxUploader:
         else:
             self.isLoggedIn = False
 
-    def start_auth_flow(self):
+    @staticmethod
+    def start_auth_flow():
         """
         Returns: Authorisation URL
         """
@@ -40,7 +41,8 @@ class DropboxUploader:
             pickle.dump(self.auth_flow, credential_store)
         return url
 
-    def complete_auth_flow(self, auth_code):
+    @staticmethod
+    def complete_auth_flow(auth_code):
         try:
             self.auth_flow = load_credentials_file()
             self.oauth_result = self.auth_flow.finish(auth_code)
@@ -89,9 +91,10 @@ class DropboxUploader:
 if __name__ == "__main__":
     dbx = DropboxUploader()
     if not dbx.isLoggedIn:
-        print(dbx.start_auth_flow())
+        print(DropboxUploader.start_auth_flow())
         code = input("Auth code: ")
-        dbx.complete_auth_flow(code)
+        DropboxUploader.complete_auth_flow(code)
         logger.info("Logged in to Dropbox")
     print("Starting upload")
+    dbx = DropboxUploader()
     dbx.upload_file("/Users/utkarsh/Downloads/sample.pdf")
