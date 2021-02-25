@@ -69,7 +69,7 @@ class DropboxUploader:
             try:
                 metadata = dbx.files_get_metadata(filename)
                 if metadata:
-                    print("Exists")
+                    logger.info(f"File alredy exists on server")
                 return metadata
             except dropbox.exceptions.ApiError:
                 chunk_size = 4 * 1024 * 1024
