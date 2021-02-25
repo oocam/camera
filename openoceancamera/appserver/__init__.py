@@ -238,6 +238,7 @@ def on_disconnect():
 def start_dropbox_auth():
     dbx = DropboxUploader()
     url = dbx.start_auth_flow()
+    logging.info(url)
     emit("dropbox_auth_url", url)
 
 @socketio.on("dropbox_auth_finish")
