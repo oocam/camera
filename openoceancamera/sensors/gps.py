@@ -7,7 +7,7 @@ from adafruit_gps import GPS_GtopI2C
 
 class GPS(GPS_GtopI2C):
     def __init__(self):
-        super().__init__(self, board.I2C())
+        super().__init__(board.I2C())
         self.send_command(b"PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0")
         self.send_command(b"PMTK220,1000")
         threading.Timer(1, self.update).start()
