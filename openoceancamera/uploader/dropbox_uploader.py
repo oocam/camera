@@ -31,8 +31,7 @@ class DropboxUploader:
         else:
             self.isLoggedIn = False
 
-    @staticmethod
-    def start_auth_flow():
+    def start_auth_flow(self):
         """
         Returns: Authorisation URL
         """
@@ -41,8 +40,7 @@ class DropboxUploader:
             pickle.dump(self.auth_flow, credential_store)
         return url
 
-    @staticmethod
-    def complete_auth_flow(auth_code):
+    def complete_auth_flow(self, auth_code):
         try:
             self.auth_flow = load_credentials_file()
             self.oauth_result = self.auth_flow.finish(auth_code)
