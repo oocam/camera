@@ -18,6 +18,7 @@ from subsealight import PWM
 from logger import logger
 from restart import restart_code
 from camera.utils import get_camera_name
+from uploader import DropboxUploader
 
 app = Flask("OpenOceanCam")
 app.config["CORS_HEADERS"] = "Content-Type"
@@ -232,6 +233,18 @@ def on_disconnect():
     global run_livestream 
     logger.debug("device disconnected")
     run_livestream = False
+
+@socketio.on("dropbox_auth_start")
+def start_dropbox_auth():
+    url = DropboxUploader.start_auth_flow()
+    emit("dropbox_auth_url", url)
+
+@socketio.on("dropbox_auth_finish")
+def finish_dropbox_auth(data):
+    DropboxUploader.complete_auth_flow(data)
+    dbx = DropboxUploader()
+    user_details = dbx.get_user_details()
+    emit("dropbox_auth_complete", user_details)
 
 @socketio.on("livestream")
 def livestream():

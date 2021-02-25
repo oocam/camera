@@ -10,8 +10,8 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 CREDENTIAL_STORE = os.path.join(os.environ["HOME"], ".oocam", "credentials")
-APP_KEY=os.environ.get(["DROPBOX_KEY"], "")
-APP_SECRET=os.environ.get(["DROPBOX_SECRET"], "")
+APP_KEY=os.environ.get("DROPBOX_KEY", "")
+APP_SECRET=os.environ.get("DROPBOX_SECRET", "")
 
 def load_credentials_file():
     if os.path.exists(CREDENTIAL_STORE):
@@ -35,10 +35,14 @@ class DropboxUploader:
         """
         Returns: Authorisation URL
         """
-        return self.auth_flow.start()
+        url = self.auth_flow.start()
+        with open(CREDENTIAL_STORE, 'wb') as credential_store:
+            pickle.dump(self.auth_flow, credential_store)
+        return url
 
     def complete_auth_flow(self, auth_code):
         try:
+            self.auth_flow = load_credentials_file()
             self.oauth_result = self.auth_flow.finish(auth_code)
             with open(CREDENTIAL_STORE, 'wb') as credential_store:
                 pickle.dump(self.oauth_result, credential_store)
