@@ -238,7 +238,7 @@ def on_disconnect():
 def start_dropbox_auth():
     dbx = DropboxUploader()
     url = dbx.start_auth_flow()
-    logging.info(url)
+    logger.info(url)
     emit("dropbox_auth_url", url)
 
 @socketio.on("dropbox_auth_finish")
@@ -246,7 +246,7 @@ def finish_dropbox_auth(data):
     dbx = DropboxUploader()
     dbx.complete_auth_flow(data)
     user_details = dbx.get_user_details()
-    emit("dropbox_auth_complete", user_details)
+    emit("dropbox_auth_complete", user_details.email)
 
 @socketio.on("livestream")
 def livestream():
