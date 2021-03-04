@@ -25,15 +25,15 @@ class Sensor:
         except Exception as err: 
             logger.error(f"Sensor Error: {err}")
         try:
-            self.PressureSensor = PressureSensor()
+            self.pressure_sensor = PressureSensor()
         except Exception as err: 
             logger.error(f"Sensor Error: {err}")
         try:
-            self.TemperatureSensor = TemperatureSensor() 
+            self.temperature_sensor = TemperatureSensor() 
         except Exception as err: 
             logger.error(f"Sensor Error: {err}")
         try:
-            self.LuminositySensor = LuminositySensor() 
+            self.luminosity_sensor = LuminositySensor() 
         except Exception as err: 
             logger.error(f"Sensor Error: {err}")
         
@@ -66,19 +66,29 @@ class Sensor:
 
     def read_sensor_data(self):
         try:
-            self.pressure_data = self.PressureSensor.pressure() 
-            self.temperature_data = self.TemperatureSensor.temperature() 
-            self.luminosity_data = self.LuminositySensor.luminosity() 
+            self.pressure_data = self.pressure_sensor.pressure()
         except PressureSensorCannotReadException as err:
             self.pressure_data = -1
             logger.error(f"Error: {err}")
+        except Exception as err:
+            logger.error(f"Sensor error: {err}")
+            pass
+
+        try:
+            self.temperature_data = self.temperature_sensor.temperature() 
         except TemperatureSensorCannotReadException as err: 
             self.temperature_data = -1 
             logger.error(f"Error: {err}")
+        except Exception as err:
+            logger.error(f"Sensor error: {err}")
+            pass
+
+        try:
+            self.luminosity_data = self.luminosity_sensor.luminosity() 
         except LuminositySensorCannotReadException as err: 
             self.luminosity_data = -1 
             logger.error(f"Error: {err}")
-        except Exception as err: 
+        except Exception as err:
             logger.error(f"Sensor error: {err}")
             pass
     
