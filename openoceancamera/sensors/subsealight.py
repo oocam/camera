@@ -3,7 +3,7 @@ import datetime
 import sys
 from logger import logger
 
-class SubSeaLight(Object): 
+class SubSeaLight: 
 
     def __init__(self):
         GPIO.setwarnings(False)
