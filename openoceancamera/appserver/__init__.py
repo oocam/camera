@@ -254,10 +254,13 @@ def finish_dropbox_auth(data):
 @socketio.on("dropbox_auth_get_user")
 def get_auth_user():
     dbx = DropboxUploader()
-    user_details = dbx.get_user_details()
-    if user_details:
-        emit("dropbox_auth_complete", user_details.email)
-    else:
+    try:
+        user_details = dbx.get_user_details()
+        if user_details:
+            emit("dropbox_auth_complete", user_details.email)
+        else:
+            emit("dropbox_auth_complete", None)
+    except:
         emit("dropbox_auth_complete", None)
 
 @socketio.on("livestream")
