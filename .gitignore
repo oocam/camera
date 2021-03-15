@@ -13,3 +13,5 @@
 !.github
 !.github/**
 !scripts
+!etc/
+!etc/**
