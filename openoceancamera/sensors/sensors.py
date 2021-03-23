@@ -55,7 +55,7 @@ class Sensor:
                             "gps": {
                               "lat": self.gps.latitude,
                               "long": self.gps.longitude
-                            }
+                            } if self.gps else None
                         }
                     )
                 )
