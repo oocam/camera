@@ -101,7 +101,7 @@ class Sensor:
 
         try:
             self.coordinates = {
-              "lat": self.gps.latitude
+              "lat": self.gps.latitude,
               "long": self.gps.longitude
             }
         except Exception as err:
