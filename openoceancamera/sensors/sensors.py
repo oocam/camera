@@ -19,7 +19,7 @@ class Sensor:
         self.temperature_data = -1
         self.luminosity_data = -1
         self.coordinates = {
-          "lat": -1
+          "lat": -1,
           "long": -1
         }
         self.log_filename = LOG_FILE
