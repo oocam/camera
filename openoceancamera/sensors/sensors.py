@@ -18,6 +18,10 @@ class Sensor:
         self.pressure_data = -1
         self.temperature_data = -1
         self.luminosity_data = -1
+        self.coordinates = {
+          "lat": -1
+          "long": -1
+        }
         self.log_filename = LOG_FILE
 
         try:
@@ -44,6 +48,12 @@ class Sensor:
             file_mode = "w"
         try:
             self.read_sensor_data()
+            try:
+                latitude = self.gps.latitude
+                longitude = self.gps.longitude
+            except:
+                latitude = -1
+                longitude = -1
             with open(self.log_filename, file_mode) as f:
                 f.write(
                     json.dumps(
@@ -52,10 +62,7 @@ class Sensor:
                             "luminosity": self.luminosity_data,
                             "temp": self.temperature_data,
                             "pressure": self.pressure_data,
-                            "gps": {
-                              "lat": self.gps.latitude,
-                              "long": self.gps.longitude
-                            } if self.gps else None
+                            "gps": self.coordinates
                         }
                     )
                 )
@@ -91,16 +98,22 @@ class Sensor:
         except Exception as err:
             logger.error(f"Sensor error: {err}")
             pass
+
+        try:
+            self.coordinates = {
+              "lat": self.gps.latitude
+              "long": self.gps.longitude
+            }
+        except Exception as err:
+            logger.error(f"Sensor error: {err}")
+            pass
     
     def get_sensor_data(self): 
         return { 
             "pressure": self.pressure_data, 
             "temperature" : self.temperature_data, 
             "luminosity" : self.luminosity_data,
-            "gps": {
-              "lat": self.gps.latitude,
-              "long": self.gps.longitude
-            } if self.gps else None
+            "gps": self.coordinates
         }
 
 class PressureSensorNotConnectedException(Exception):
