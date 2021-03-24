@@ -16,8 +16,11 @@ APP_SECRET=os.environ.get("DROPBOX_SECRET", "")
 def load_credentials_file():
     if os.path.exists(os.path.dirname(CREDENTIAL_STORE)) and os.path.exists(CREDENTIAL_STORE):
         with open(CREDENTIAL_STORE, 'rb') as f:
-            data = pickle.load(f)
-            return data
+            try:
+                data = pickle.load(f)
+                return data
+            except:
+                return None
     elif os.path.exists(os.path.dirname(CREDENTIAL_STORE)):
         with open(CREDENTIAL_STORE, 'wb') as f:
             pass
