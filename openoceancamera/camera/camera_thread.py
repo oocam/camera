@@ -27,7 +27,10 @@ def camera_thread():
         if (slot_index >= 0):
             slot = camera_schedule.get_slot(slot_index)
             if(slot["upload"]):
-                start_upload(slot)
+                try:
+                    start_upload(slot)
+                except err:
+                    logger.error(err)
             else:
                 start_capture(slot)
         # else check when the next schedule is
