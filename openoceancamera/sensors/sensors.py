@@ -20,7 +20,7 @@ class Sensor:
         self.luminosity_data = -1
         self.coordinates = {
           "lat": -1,
-          "long": -1
+          "lng": -1
         }
         self.log_filename = LOG_FILE
 
@@ -72,42 +72,53 @@ class Sensor:
                 pass
 
     def read_sensor_data(self):
-        try:
-            self.pressure_data = self.pressure_sensor.pressure()
-        except PressureSensorCannotReadException as err:
+        if hasattr(self, 'pressure_sensor'):
+            try:
+                self.pressure_data = self.pressure_sensor.pressure()
+            except PressureSensorCannotReadException as err:
+                self.pressure_data = -1
+                logger.error(f"Error: {err}")
+            except Exception as err:
+                logger.error(f"Sensor error: {err}")
+        else:
             self.pressure_data = -1
-            logger.error(f"Error: {err}")
-        except Exception as err:
-            logger.error(f"Sensor error: {err}")
-            pass
 
-        try:
-            self.temperature_data = self.temperature_sensor.temperature() 
-        except TemperatureSensorCannotReadException as err: 
-            self.temperature_data = -1 
-            logger.error(f"Error: {err}")
-        except Exception as err:
-            logger.error(f"Sensor error: {err}")
-            pass
+        if hasattr(self, 'temperature_sensor'):
+            try:
+                self.temperature_data = self.temperature_sensor.temperature() 
+            except TemperatureSensorCannotReadException as err: 
+                self.temperature_data = -1 
+                logger.error(f"Error: {err}")
+            except Exception as err:
+                logger.error(f"Sensor error: {err}")
+        else:
+            self.temperature_data = -1
 
-        try:
-            self.luminosity_data = self.luminosity_sensor.luminosity() 
-        except LuminositySensorCannotReadException as err: 
+        if hasattr(self, 'luminosity_sensor'):
+            try:
+                self.luminosity_data = self.luminosity_sensor.luminosity() 
+            except LuminositySensorCannotReadException as err: 
+                self.luminosity_data = -1 
+                logger.error(f"Error: {err}")
+            except Exception as err:
+                logger.error(f"Sensor error: {err}")
+        else:
             self.luminosity_data = -1 
-            logger.error(f"Error: {err}")
-        except Exception as err:
-            logger.error(f"Sensor error: {err}")
-            pass
 
-        try:
+        if hasattr(self, 'gps'):
+            try:
+                self.coordinates = {
+                  "lat": self.gps.latitude,
+                  "lng": self.gps.longitude
+                }
+            except Exception as err:
+                logger.error(f"GPS not connected: {err}")
+        else:
             self.coordinates = {
-              "lat": self.gps.latitude,
-              "long": self.gps.longitude
-            }
-        except Exception as err:
-            logger.error(f"Sensor error: {err}")
-            pass
-    
+                  "lat": -1,
+                  "lng": -1
+                }
+
     def get_sensor_data(self): 
         return { 
             "pressure": self.pressure_data, 
