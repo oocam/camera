@@ -25,7 +25,7 @@ def start_upload(slot):
         zipfh = zipfile.ZipFile(zipname, 'w', zipfile.ZIP_DEFLATED)
         for root, dirs, files in os.walk(EXTERNAL_DRIVE):
             for f in filter(lambda x: str(x).endswith(".jpg") or str(x).endswith(".h264"), files):
-                zipfh.write(os.path.join(root, f), os.path.relpath(os.path.join(root, f), os.path.join(ROOT, '..')))
+                zipfh.write(os.path.join(root, f), os.path.relpath(os.path.join(root, f), os.path.join(EXTERNAL_DRIVE, '..')))
         upload_handler.upload_file(zipname)
     except Exception as err:
         logger.error(f"USB Not connected. Error message: {err}")
