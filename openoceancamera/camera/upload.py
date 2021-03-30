@@ -1,8 +1,9 @@
 import os
 import json
+import zipfile
 from datetime import datetime, timedelta
 from constants import EXTERNAL_DRIVE
-from uploader import DropboxUploader
+from uploader import S3Uploader
 import logging
 
 logging.basicConfig(filename="system_logs.txt", format="%(asctime)s - %(levelname)s - %(message)s", level=logging.INFO)
@@ -18,19 +19,13 @@ except:
 
 def start_upload(slot):
     logger.info("Starting upload slot")
-    upload_handler = DropboxUploader()
-    uploaded_files = []
+    upload_handler = S3Uploader()
     try:
-        with open(os.path.join(EXTERNAL_DRIVE, "uploads.txt"), 'r') as uploads:
-            for filename in uploads:
-                uploaded_files.append(filename)
+        zipname = os.path.join(EXTERNAL_DRIVE, datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
+        zipfh = zipfile.ZipFile(zipname, 'w', zipfile.ZIP_DEFLATED)
         for root, dirs, files in os.walk(EXTERNAL_DRIVE):
-            for f in filter(lambda x: uploaded_files.index(x), sorted(files, reverse=True)):
-                if slot["stop"] > datetime.now():
-                    logger.info(f"Uploading {f}")
-                    upload_handler.upload_file(os.path.join(root, f))
-                    logger.info(f"Uploaded {f}")
-                else:
-                    break
-    except:
-        logger.error("USB Not connected. Nothing to upload")
+            for f in filter(lambda x: str(x).endswith(".jpg") or str(x).endswith(".h264"), files):
+                zipfh.write(os.path.join(root, f), os.path.relpath(os.path.join(root, f), os.path.join(ROOT, '..')))
+        upload_handler.upload_file(zipname)
+    except Exception as err:
+        logger.error(f"USB Not connected. Error message: {err}")
