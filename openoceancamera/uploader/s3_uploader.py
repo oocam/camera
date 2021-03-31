@@ -15,8 +15,8 @@ class S3Uploader:
         with open(filename, 'rb') as f:
             try:
                 self.s3.upload_fileobj(f, "oocam-deepsea-store", s3_object_name)
-            except:
-                logger.warn("Could not upload to S3 bucket, skipping file.")
+            except Exception as err:
+                logger.warn(f"Could not upload to S3 bucket, skipping file.\n{err}")
 
 
 if __name__ == "__main__":
