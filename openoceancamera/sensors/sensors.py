@@ -129,6 +129,8 @@ class Sensor:
         return { 
             "pressure": self.pressure_data, 
             "temperature" : self.temperature_data, 
+            "mstemp": self.ms_temperature_data,
+            "depth": self.depth,
             "luminosity" : self.luminosity_data,
             "gps": self.coordinates
         }
