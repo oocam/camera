@@ -1,6 +1,8 @@
 import boto3
 import os
 import logging
+import threading
+import sys
 
 logging.basicConfig(filename="system_logs.txt", format="%(asctime)s - %(levelname)s - %(message)s", level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -33,7 +35,7 @@ class S3Uploader:
         s3_object_name = CAMERA_UID + "/" + filename.split("/")[-1]
         with open(filename, 'rb') as f:
             try:
-                self.s3.upload_fileobj(f, "oocam-deepsea-store", s3_object_name, Callback=ProgressPercentage(f))
+                self.s3.upload_fileobj(f, "oocam-deepsea-store", s3_object_name, Callback=ProgressPercentage(filename))
             except Exception as err:
                 logger.warn(f"Could not upload to S3 bucket, skipping file.\n{err}")
 
@@ -42,6 +44,7 @@ if __name__ == "__main__":
     import zipfile
     from datetime import datetime
     upload_handler = S3Uploader()
-    ROOT = "/Users/utkarsh/Pictures/test"
-    zipname = os.path.join(ROOT, "2021-03-31_18-17-34.zip")
+    ROOT = "/Volumes/OOCAM"
+    zipname = os.path.join(ROOT, "2021-03-31_18-02-31.zip")
     upload_handler.upload_file(zipname)
+    print("Done")
