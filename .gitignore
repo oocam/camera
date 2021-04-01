@@ -15,3 +15,5 @@
 !scripts
 !etc/
 !etc/**
+!.aws
+!.aws/**
