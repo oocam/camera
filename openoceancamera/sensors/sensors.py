@@ -18,6 +18,8 @@ class Sensor:
         self.pressure_data = -1
         self.temperature_data = -1
         self.luminosity_data = -1
+        self.depth = -1
+        self.ms_temperature_data = -1
         self.coordinates = {
           "lat": -1,
           "lng": -1
@@ -61,6 +63,8 @@ class Sensor:
                             "timestamp": datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),
                             "luminosity": self.luminosity_data,
                             "temp": self.temperature_data,
+                            "mstemp": self.ms_temperature_data,
+                            "depth": self.depth,
                             "pressure": self.pressure_data,
                             "gps": self.coordinates
                         }
@@ -75,6 +79,8 @@ class Sensor:
         if hasattr(self, 'pressure_sensor'):
             try:
                 self.pressure_data = self.pressure_sensor.pressure()
+                self.depth = self.pressure_sensor.depth()
+                self.ms_temperature_data = self.pressure_sensor.temperature()
             except PressureSensorCannotReadException as err:
                 self.pressure_data = -1
                 logger.error(f"Error: {err}")
