@@ -20,13 +20,19 @@ except:
 def start_upload(slot):
     logger.info("Starting upload slot")
     upload_handler = S3Uploader()
+    zipname = os.path.join(EXTERNAL_DRIVE, datetime.now().strftime('%Y-%m-%d_%H-%M-%S')) + ".zip"
     try:
-        zipname = os.path.join(EXTERNAL_DRIVE, datetime.now().strftime('%Y-%m-%d_%H-%M-%S')) + ".zip"
         zipfh = zipfile.ZipFile(zipname, 'w', zipfile.ZIP_DEFLATED)
         for root, dirs, files in os.walk(EXTERNAL_DRIVE):
             for f in filter(lambda x: str(x).endswith(".jpg") or str(x).endswith(".h264"), files):
                 zipfh.write(os.path.join(root, f), os.path.relpath(os.path.join(root, f), os.path.join(EXTERNAL_DRIVE, '..')))
         logger.info("Created ZIP file")
         upload_handler.upload_file(zipname)
+        logger.info("Cleaning up after upload")
+        os.remove(zipname)
     except Exception as err:
         logger.error(f"USB Not connected. Error message: {err}")
+        try:
+            os.remove(zipname)
+        except:
+            pass
