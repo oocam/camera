@@ -2,6 +2,7 @@ import os
 import json
 import zipfile
 from datetime import datetime, timedelta
+from time import sleep
 from constants import EXTERNAL_DRIVE
 from uploader import S3Uploader
 import logging
@@ -30,6 +31,12 @@ def start_upload(slot):
         upload_handler.upload_file(zipname)
         logger.info("Cleaning up after upload")
         os.remove(zipname)
+        currenttime = datetime.now()
+        if currenttime < slot["stop"]:
+            logger.info("Uploaded. Going to wait for the slot to finish")
+            while currenttime < slot["stop"]:
+                currenttime = datetime.now()
+                sleep(1)
     except Exception as err:
         logger.error(f"USB Not connected. Error message: {err}")
         try:
