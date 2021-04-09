@@ -4,11 +4,9 @@ from logger import logger
 from datetime import datetime
 from constants import LOG_FILE
 
-# sensors_logger = logging.getLogger(__name__)
-
 from .ms5837 import MS5837_30BA, DENSITY_SALTWATER, UNITS_Centigrade, UNITS_mbar
 from .tsys01 import TSYS01_30BA, UNITS_Centigrade
-from .tsl2561 import TSL2561_30BA
+from tsl2561 import TSL2561
 from .gps import GPS
 
 
@@ -219,18 +217,19 @@ class LuminositySensorCannotReadException(Exception):
         super().__init__(*args, **kwargs)
 
 
-class LuminositySensor(TSL2561_30BA):
-    def __init__(self, bus=1):
-        super().__init__(bus=bus)
-        if not super().init():
-            logger.warning("TSL2561_30BA may not be connected")
+class LuminositySensor(TSL2561):
+    def __init__(self):
+        try:
+            super().__init__()
+        except Exception as err:
+            logger.warning(f"TSL2561_30BA may not be connected: {err}")
             raise LuminositySensorNotConnectedException(
                 "TSL2561_30BA may not be connected"
             )
 
     def luminosity(self):
-        if self.read():
-            data = super().lux()
+        if self.lux() >= 0:
+            data = self.lux()
             logger.info(f"Reading luminosity data from the sensor: {data}")
             return data
         else:
