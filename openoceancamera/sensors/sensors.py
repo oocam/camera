@@ -27,19 +27,19 @@ class Sensor:
         try:
             self.gps = GPS()
         except Exception as err: 
-            logger.error(f"Sensor Error: {err}")
+            logger.error(f"GPS: {err}")
         try:
             self.pressure_sensor = PressureSensor()
         except Exception as err: 
-            logger.error(f"Sensor Error: {err}")
+            logger.error(f"Pressure sensor: {err}")
         try:
             self.temperature_sensor = TemperatureSensor() 
         except Exception as err: 
-            logger.error(f"Sensor Error: {err}")
+            logger.error(f"Temperature sensor: {err}")
         try:
             self.luminosity_sensor = LuminositySensor() 
         except Exception as err: 
-            logger.error(f"Sensor Error: {err}")
+            logger.error(f"Luminosity: {err}")
         
     def write_sensor_data(self):
         if os.path.exists(self.log_filename):

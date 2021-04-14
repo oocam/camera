@@ -89,14 +89,14 @@ def capture_images(slot):
                     currenttime = datetime.now()
                     if currenttime < slot["stop"]:
                         sleep(frequency-1)
-                        sensor.write_sensor_data() 
+                        sensor.write_sensor_data()
                         sensor_data = sensor.get_sensor_data()
                         sensor_data["camera_name"] = camera_name
                         camera.exif_tags["IFDO.ImageDescription"] = json.dumps(sensor_data)
                     else: 
                         PWM.switch_off() 
                         break
-        except Exception as err: 
+        except Exception as err:
             PWM.switch_off() 
             logger.error(err)
             reboot_camera()
