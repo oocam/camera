@@ -111,6 +111,7 @@ class Sensor:
 
         if hasattr(self, 'gps'):
             try:
+                self.gps.update()
                 self.coordinates = {
                   "lat": self.gps.latitude,
                   "lng": self.gps.longitude
