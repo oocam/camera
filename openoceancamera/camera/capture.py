@@ -63,10 +63,7 @@ def capture_images(slot):
         light = slot["light"]
         frequency = slot["frequency"]
         shutter_speed = slot["shutter_speed"]
-        try: 
-            sensor = Sensor()
-        except Exception as err: 
-            logger.error(err)
+        sensor = Sensor()
         camera_name = get_camera_name()
         wiper_status = slot.get("wiper", False)
         if wiper_status: 
@@ -79,7 +76,7 @@ def capture_images(slot):
                 camera.exposure_compensation = exposure_compensation 
                 camera.shutter_speed = shutter_speed
                 PWM.switch_on(light)
-                sensor.write_sensor_data() 
+                sensor.write_sensor_data()
                 sensor_data = sensor.get_sensor_data()
                 sensor_data["camera_name"] = camera_name
                 camera.exif_tags["IFDO.ImageDescription"] = json.dumps(sensor_data)
