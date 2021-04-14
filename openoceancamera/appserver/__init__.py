@@ -207,6 +207,10 @@ def sendTestPicMem():
         }
         return jsonify(response), 200
 
+@app.route("/cameraID", methods=["GET"])
+def get_camera_id():
+    return os.environ['CAMERA_UID']
+
 @app.route("/update", methods=["GET","POST"])
 def update_code(): 
     if request.method == "POST": 
