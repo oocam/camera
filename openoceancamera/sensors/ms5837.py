@@ -192,6 +192,10 @@ class MS5837():
         units -- the units the user wants temperature in
         resolution -- the resolution option of the sensor
         """
+        
+        self._get_data(resolution = resolution)
+        self._first_order_calculation()
+        self._second_order_calculation()        
         if units in ['Celsius' , 'degC','C']:
             temperature  = self.temp2
         elif units in ['Fahrenheit' , 'degF' , 'F']:
@@ -248,6 +252,8 @@ class MS5837():
         sea_level_pressure -- pressure exerted by atmosphere.
         resolution -- the resolution option of the sensor.
         """
+        
+        self.absolute_pressure() #Get the absolute pressure reading.
         p = self.abs_p - sea_level_pressure
         
         if p < 0:
