@@ -65,28 +65,6 @@ class Sensor:
             logger.error(err)
 
     def read_sensor_data(self):
-        if hasattr(self, 'pressure_sensor'):
-            try:
-                self.pressure_data = self.pressure_sensor.absolute_pressure()
-            except PressureSensorCannotReadException as err:
-                self.pressure_data = -1
-                logger.error(f"Error: {err}")
-            except Exception as err:
-                logger.error(f"Sensor error: {err}")
-        else:
-            self.pressure_data = -1
-
-        if hasattr(self, 'temperature_sensor'):
-            try:
-                self.temperature_data = self.temperature_sensor.temperature() 
-            except TemperatureSensorCannotReadException as err: 
-                self.temperature_data = -1 
-                logger.error(f"Error: {err}")
-            except Exception as err:
-                logger.error(f"Sensor error: {err}")
-        else:
-            self.temperature_data = -1
-
         if hasattr(self, 'luminosity_sensor'):
             try:
                 self.luminosity_data = self.luminosity_sensor.luminosity() 
