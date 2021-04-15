@@ -147,6 +147,7 @@ class PressureSensorCannotReadException(Exception):
 class PressureSensor(MS5837):
     def __init__(self):
         super().__init__('30BA')
+        self.initialize_sensor()
 
 
 class TemperatureSensorNotConnectedException(Exception):
