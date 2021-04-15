@@ -48,30 +48,21 @@ class Sensor:
             file_mode = "w"
         try:
             self.read_sensor_data()
-            try:
-                latitude = self.gps.latitude
-                longitude = self.gps.longitude
-            except:
-                latitude = -1
-                longitude = -1
+            sensor_data_object = {
+                "timestamp": datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),
+                "luminosity": self.luminosity_data,
+                "temp": self.temperature_data,
+                "mstemp": self.ms_temperature_data,
+                "depth": self.depth,
+                "pressure": self.pressure_data,
+                "gps": self.coordinates
+            }
+            sensor_data_json = json.dumps(sensor_data_object)
             with open(self.log_filename, file_mode) as f:
-                f.write(
-                    json.dumps(
-                        {
-                            "timestamp": datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),
-                            "luminosity": self.luminosity_data,
-                            "temp": self.temperature_data,
-                            "mstemp": self.ms_temperature_data,
-                            "depth": self.depth,
-                            "pressure": self.pressure_data,
-                            "gps": self.coordinates
-                        }
-                    )
-                )
+                f.write(sensor_data_json)
                 f.write("\n")
-        except:
-            with open(self.log_filename, "w"):
-                pass
+        except Exception as err:
+            logger.error(err)
 
     def read_sensor_data(self):
         if hasattr(self, 'pressure_sensor'):
@@ -86,6 +77,8 @@ class Sensor:
                 logger.error(f"Sensor error: {err}")
         else:
             self.pressure_data = -1
+            self.depth = -1
+            self.ms_temperature_data = -1
 
         if hasattr(self, 'temperature_sensor'):
             try:
