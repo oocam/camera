@@ -17,3 +17,4 @@
 !etc/**
 !.aws
 !.aws/**
+!version.txt

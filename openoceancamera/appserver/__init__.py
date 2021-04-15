@@ -222,6 +222,18 @@ def update_code():
             logger.error(f"Error: {err}")
             return str(err) , 400 
 
+
+@app.route("/version", methods=["GET"])
+def get_version():
+    try:
+        with open("/home/pi/version.txt") as vfile:
+            version_string = vfile.read()
+        return version_string , 200
+    except Exception as err: 
+        logger.error(f"Error: {err}")
+        return str(err) , 400
+
+
 livestream_running = False
 run_livestream = False
 
