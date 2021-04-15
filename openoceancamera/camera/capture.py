@@ -76,10 +76,6 @@ def capture_images(slot):
                 camera.exposure_compensation = exposure_compensation 
                 camera.shutter_speed = shutter_speed
                 PWM.switch_on(light)
-                sensor.write_sensor_data()
-                sensor_data = sensor.get_sensor_data()
-                sensor_data["camera_name"] = camera_name
-                camera.exif_tags["IFDO.ImageDescription"] = json.dumps(sensor_data)
                 logger.debug("Entering continuous capture")
                 for f in camera.capture_continuous(f'{EXTERNAL_DRIVE}/{camera_name}_'+'img{timestamp:%Y-%m-%d-%H-%M-%S}.jpg', use_video_port=True):
                     PWM.switch_off()
