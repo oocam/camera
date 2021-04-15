@@ -75,8 +75,6 @@ class Sensor:
                 logger.error(f"Sensor error: {err}")
         else:
             self.pressure_data = -1
-            self.depth = -1
-            self.ms_temperature_data = -1
 
         if hasattr(self, 'temperature_sensor'):
             try:
@@ -114,6 +112,17 @@ class Sensor:
                   "lat": -1,
                   "lng": -1
                 }
+        
+        if hasattr(self, 'pressure_sensor'):
+            try:
+                self.ms_temperature_data = self.pressure_sensor.temperature()
+            except PressureSensorCannotReadException as err:
+                self.temperature_data = -1
+                logger.error(f"Error: {err}")
+            except Exception as err:
+                logger.error(f"Sensor error: {err}")
+        else:
+            self.temperature_data = -1
 
     def get_sensor_data(self): 
         return { 
