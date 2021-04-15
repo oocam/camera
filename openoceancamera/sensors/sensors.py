@@ -117,12 +117,12 @@ class Sensor:
             try:
                 self.ms_temperature_data = self.pressure_sensor.temperature()
             except PressureSensorCannotReadException as err:
-                self.temperature_data = -1
+                self.ms_temperature_data = -1
                 logger.error(f"Error: {err}")
             except Exception as err:
                 logger.error(f"Sensor error: {err}")
         else:
-            self.temperature_data = -1
+            self.ms_temperature_data = -1
 
     def get_sensor_data(self): 
         return { 
