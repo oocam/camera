@@ -68,8 +68,6 @@ class Sensor:
         if hasattr(self, 'pressure_sensor'):
             try:
                 self.pressure_data = self.pressure_sensor.absolute_pressure()
-                self.depth = self.pressure_sensor.depth()
-                self.ms_temperature_data = self.pressure_sensor.temperature()
             except PressureSensorCannotReadException as err:
                 self.pressure_data = -1
                 logger.error(f"Error: {err}")

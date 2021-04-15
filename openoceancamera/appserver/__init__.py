@@ -101,7 +101,8 @@ def returnConfig():
                     "local_time": datetime.now().strftime("%d-%B-%Y %H:%M:%S"),
                     "local_timezone": str(datetime.utcnow().astimezone().tzinfo) ,
                     "config": json.dumps(camera_config),
-                    "camera_name": get_camera_name()
+                    "camera_name": get_camera_name(),
+                    "camera_id": os.environ.get('CAMERA_UID')
                 }
                 return response, 200
         except Exception as err:
@@ -206,10 +207,6 @@ def sendTestPicMem():
             "sensors": json.dumps(sensor_data),
         }
         return jsonify(response), 200
-
-@app.route("/cameraID", methods=["GET"])
-def get_camera_id():
-    return os.environ['CAMERA_UID']
 
 @app.route("/update", methods=["GET","POST"])
 def update_code(): 
