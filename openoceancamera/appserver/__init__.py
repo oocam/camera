@@ -79,7 +79,7 @@ def set_schedule():
         print(timezone)
         print(date_input)
         # Sets the system time to the user's phone time
-        os.system(f"sudo date -s '{date_input}'")
+        os.system(f"sudo date -s '{str(date_input).strip()}'")
         # Save the system time to RTC -
         os.system("sudo sh /home/pi/openoceancamera/wittypi/wittycam.sh 1")
         os.system("sudo sh /home/pi/openoceancamera/wittypi/wittycam.sh 2")
