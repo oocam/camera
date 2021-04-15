@@ -9,12 +9,10 @@ class GPS(GPS_GtopI2C):
         super().__init__(board.I2C())
         self.send_command(b"PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0")
         self.send_command(b"PMTK220,1000")
+        self.request_firmware()
 
     def request_firmware(self):
         self.send_command(b"PMTK605")
-
-    def update(self):
-        super().update()
 
 
 if __name__ == "__main__":

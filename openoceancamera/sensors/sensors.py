@@ -4,7 +4,7 @@ from logger import logger
 from datetime import datetime
 from constants import LOG_FILE
 
-from .ms5837 import MS5837_30BA, DENSITY_SALTWATER, UNITS_Centigrade, UNITS_mbar
+from .ms5837 import MS5837
 from .tsys01 import TSYS01_30BA, UNITS_Centigrade
 from tsl2561 import TSL2561
 from .gps import GPS
@@ -76,7 +76,7 @@ class Sensor:
     def read_sensor_data(self):
         if hasattr(self, 'pressure_sensor'):
             try:
-                self.pressure_data = self.pressure_sensor.pressure()
+                self.pressure_data = self.pressure_sensor.absolute_pressure()
                 self.depth = self.pressure_sensor.depth()
                 self.ms_temperature_data = self.pressure_sensor.temperature()
             except PressureSensorCannotReadException as err:
@@ -144,39 +144,9 @@ class PressureSensorCannotReadException(Exception):
         super().__init__(*args, **kwargs)
 
 
-class PressureSensor(MS5837_30BA):
-    def __init__(self, bus=1):
-        super().__init__(bus=bus)
-        if not super().init():
-            logger.warning("MS5837_30BA may not be connected")
-            raise PressureSensorNotConnectedException(
-                "MS5837_30BA may not be connected"
-            )
-        self.setFluidDensity(DENSITY_SALTWATER)
-
-    def pressure(self, conversion=UNITS_mbar):
-        if self.read():
-            data = super().pressure(conversion=conversion)
-            logger.info(f"Reading pressure data from the sensor: {data}")
-            return data
-        else:
-            raise PressureSensorCannotReadException("Could not read pressure values")
-
-    def temperature(self, conversion=UNITS_Centigrade):
-        if self.read():
-            data = super().temperature(conversion=conversion)
-            logger.info(f"Reading temperature data from the sensor: {data}")
-            return data
-        else:
-            raise PressureSensorCannotReadException("Could not read temperature values")
-
-    def depth(self):
-        if self.read():
-            data = super().depth()
-            logger.info(f"Reading depth data from the sensor: {data}")
-            return data
-        else:
-            raise PressureSensorCannotReadException("Could not read depth values")
+class PressureSensor(MS5837):
+    def __init__(self):
+        super().__init__('30BA')
 
 
 class TemperatureSensorNotConnectedException(Exception):
