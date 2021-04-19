@@ -11,6 +11,20 @@ from restart import reboot_camera
 from .utils import get_camera_name
 from wiper import run_wiper
 
+
+def annotate_text_string(sensor_data):
+    result = ""
+    if not sensor_data["pressure"] == -1:
+        result += "Pressure: " + sensor_data["pressure"] + " "
+    if not sensor_data["temperature"] == -1:
+        result += "Temperature: " + sensor_data["temperature"] + " "
+    if not sensor_data["depth"] == -1:
+        result += "Depth: " + sensor_data["depth"] + " "
+    if not sensor_data["luminosity"] == -1:
+        result += "Luminosity: " + sensor_data["luminosity"] + " "
+    if not sensor_data["gps"]["lat"] == -1 and not sensor_data["gps"]["lng"] == -1:
+        result += "Lat: " + sensor_data["gps"]["lat"] + "Lng: " + sensor_data["gps"]["lng"] + " "
+    return result
 def capture_video(slot, sensors):
     resolution = slot["resolution"]
     framerate = slot["framerate"]
@@ -65,7 +79,7 @@ def capture_images(slot, sensors: Sensor):
         shutter_speed = slot["shutter_speed"]
         camera_name = get_camera_name()
         wiper_status = slot.get("wiper", False)
-        if wiper_status: 
+        if wiper_status:
             run_wiper(3)
         logger.debug(f"Assigning camera config to {camera_name}")
         try: 
@@ -74,21 +88,24 @@ def capture_images(slot, sensors: Sensor):
                 camera.exposure_mode = exposure_mode 
                 camera.exposure_compensation = exposure_compensation 
                 camera.shutter_speed = shutter_speed
+                camera.annotate_text_size = 10
                 PWM.switch_on(light)
                 logger.debug("Entering continuous capture")
-                sensor_data = sensors.get_sensor_data(short=True)
-                camera.exif_tags["IFDO.ImageDescription"] = json.dumps(sensor_data)
+                sensor_data = sensors.get_sensor_data()
+                sensor_string = annotate_text_string(sensor_data)
+                camera.annotate_text(sensor_string)
                 for f in camera.capture_continuous(f'{EXTERNAL_DRIVE}/{camera_name}_'+'img{timestamp:%Y-%m-%d-%H-%M-%S}.jpg', use_video_port=True):
                     PWM.switch_off()
                     currenttime = datetime.now()
                     if currenttime < slot["stop"]:
                         sleep(frequency-1)
                         sensors.write_sensor_data()
-                        sensor_data = sensors.get_sensor_data(short=True)
+                        sensor_data = sensors.get_sensor_data()
                         sensor_data["camera_name"] = camera_name
-                        camera.exif_tags["IFDO.ImageDescription"] = json.dumps(sensor_data)
-                    else: 
-                        PWM.switch_off() 
+                        sensor_string = annotate_text_string(sensor_data)
+                        camera.annotate_text(sensor_string)
+                    else:
+                        PWM.switch_off()
                         break
         except Exception as err:
             PWM.switch_off() 
