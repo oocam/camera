@@ -2,6 +2,7 @@ import os
 import json
 from logger import logger
 from datetime import datetime
+from time import sleep
 from constants import LOG_FILE
 
 from .ms5837 import MS5837
@@ -225,6 +226,7 @@ class LuminositySensor(TSL2561):
 def start_sensor_readings(sensors: Sensor):
     while True:
         sensors.read_sensor_data()
+        sleep(3)
 
 if __name__ == "__main__":
     pass
