@@ -38,29 +38,6 @@ class Sensor:
         except Exception as err: 
             logger.error(f"Luminosity: {err}")
         
-    def write_sensor_data(self):
-        if os.path.exists(self.log_filename):
-            file_mode = "a"
-        else:
-            file_mode = "w"
-        try:
-            self.read_sensor_data()
-            sensor_data_object = {
-                "timestamp": datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),
-                "luminosity": self.luminosity_data,
-                "temp": self.temperature_data,
-                "mstemp": self.ms_temperature_data,
-                "depth": self.depth,
-                "pressure": self.pressure_data,
-                "gps": self.coordinates
-            }
-            sensor_data_json = json.dumps(sensor_data_object)
-            with open(self.log_filename, file_mode) as f:
-                f.write(sensor_data_json)
-                f.write("\n")
-        except Exception as err:
-            logger.error(err)
-
     def read_sensor_data(self):
         if hasattr(self, 'luminosity_sensor'):
             try:
@@ -112,7 +89,29 @@ class Sensor:
             "luminosity" : self.luminosity,
             "gps": self.gps_coordinates
         }
-    
+
+    def write_sensor_data(self):
+        if os.path.exists(self.log_filename):
+            file_mode = "a"
+        else:
+            file_mode = "w"
+        try:
+            self.read_sensor_data()
+            sensor_data_object = {
+                "timestamp": datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),
+                "luminosity": self.luminosity_data,
+                "temp": self.temperature_data,
+                "mstemp": self.ms_temperature_data,
+                "depth": self.depth,
+                "pressure": self.pressure_data,
+                "gps": self.coordinates
+            }
+            sensor_data_json = json.dumps(sensor_data_object)
+            with open(self.log_filename, file_mode) as f:
+                f.write(sensor_data_json)
+                f.write("\n")
+        except Exception as err:
+            logger.error(err)
 
     def get_sensor_data(self, short=False):
         if short:
@@ -230,12 +229,6 @@ class LuminositySensor(TSL2561):
             raise LuminositySensorCannotReadException(
                 "Could not read luminosity values"
             )
-
-
-def start_sensor_readings(sensors: Sensor):
-    while True:
-        sensors.read_sensor_data()
-        sleep(3)
 
 if __name__ == "__main__":
     pass

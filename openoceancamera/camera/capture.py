@@ -29,7 +29,7 @@ def annotate_text_string(sensor_data):
     return result
 
 
-def capture_video(slot, sensors):
+def capture_video(slot):
     resolution = slot["resolution"]
     framerate = slot["framerate"]
     iso = slot["iso"]
@@ -56,8 +56,10 @@ def capture_video(slot, sensors):
             PWM.switch_on(light)
             camera.start_recording(filename, format="h264")
             current_time = datetime.now() 
-            sensor.write_sensor_data() 
-            sensor_data = sensor.get_sensor_data(short=True)
+
+            sensors = Sensor()
+            sensors.write_sensor_data() 
+            sensor_data = sensors.get_sensor_data(short=True)
             while current_time < slot["stop"]: 
                 camera.annotate_text = f"{current_time.strftime('%Y-%m-%d %H:%M:%S')} @ {slot['framerate']} fps"
                 sensors.write_sensor_data() 
@@ -71,7 +73,7 @@ def capture_video(slot, sensors):
         logger.error(err)
         reboot_camera()
 
-def capture_images(slot, sensors: Sensor):
+def capture_images(slot):
     try:
         logger.debug("Going to set camera config")
         resolution = slot["resolution"]
@@ -95,6 +97,8 @@ def capture_images(slot, sensors: Sensor):
                 camera.annotate_text_size = 10
                 PWM.switch_on(light)
                 logger.debug("Entering continuous capture")
+
+                sensors = Sensor()
                 sensor_data = sensors.get_sensor_data()
                 sensor_data["camera_name"] = camera_name
                 camera.annotate_text =  annotate_text_string(sensor_data)
@@ -118,9 +122,9 @@ def capture_images(slot, sensors: Sensor):
         PWM.switch_off()
         logger.error(err)
 
-def start_capture(slot, sensors):
+def start_capture(slot):
     logger.debug("Going to capture")
     if slot["video"]:
-        capture_video(slot, sensors)
+        capture_video(slot)
     else:
-        capture_images(slot, sensors)
+        capture_images(slot)
