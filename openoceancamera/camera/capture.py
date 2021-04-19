@@ -14,6 +14,8 @@ from wiper import run_wiper
 
 def annotate_text_string(sensor_data):
     result = ""
+    if not sensor_data["camera_name"] == "":
+        result += "Camera: " + sensor_data["camera_name"]
     if not sensor_data["pressure"] == -1:
         result += "Pressure: " + str(sensor_data["pressure"]) + " "
     if not sensor_data["temperature"] == -1:
