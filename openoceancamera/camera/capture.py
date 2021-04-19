@@ -11,7 +11,25 @@ from restart import reboot_camera
 from .utils import get_camera_name
 from wiper import run_wiper
 
-def capture_video(slot):
+
+def annotate_text_string(sensor_data):
+    result = ""
+    if not sensor_data["camera_name"] == "":
+        result += "Camera: " + sensor_data["camera_name"]
+    if not sensor_data["pressure"] == -1:
+        result += "Pressure: " + str(sensor_data["pressure"]) + " "
+    if not sensor_data["temperature"] == -1:
+        result += "Temperature: " + str(sensor_data["temperature"]) + " "
+    if not sensor_data["depth"] == -1:
+        result += "Depth: " + str(sensor_data["depth"]) + " "
+    if not sensor_data["luminosity"] == -1:
+        result += "Luminosity: " + str(sensor_data["luminosity"]) + " "
+    if not sensor_data["gps"]["lat"] == -1 and not sensor_data["gps"]["lng"] == -1:
+        result += "Lat: " + str(sensor_data["gps"]["lat"]) + "Lng: " + str(sensor_data["gps"]["lng"]) + " "
+    return result
+
+
+def capture_video(slot, sensors):
     resolution = slot["resolution"]
     framerate = slot["framerate"]
     iso = slot["iso"]
@@ -39,11 +57,11 @@ def capture_video(slot):
             camera.start_recording(filename, format="h264")
             current_time = datetime.now() 
             sensor.write_sensor_data() 
-            sensor_data = sensor.get_sensor_data()
+            sensor_data = sensor.get_sensor_data(short=True)
             while current_time < slot["stop"]: 
                 camera.annotate_text = f"{current_time.strftime('%Y-%m-%d %H:%M:%S')} @ {slot['framerate']} fps"
-                sensor.write_sensor_data() 
-                sensor_data = sensor.get_sensor_data()
+                sensors.write_sensor_data() 
+                sensor_data = sensors.get_sensor_data(short=True)
                 sleep(1)
                 current_time = datetime.now() 
             camera.stop_recording() 
@@ -53,7 +71,7 @@ def capture_video(slot):
         logger.error(err)
         reboot_camera()
 
-def capture_images(slot):
+def capture_images(slot, sensors: Sensor):
     try:
         logger.debug("Going to set camera config")
         resolution = slot["resolution"]
@@ -63,10 +81,9 @@ def capture_images(slot):
         light = slot["light"]
         frequency = slot["frequency"]
         shutter_speed = slot["shutter_speed"]
-        sensor = Sensor()
         camera_name = get_camera_name()
         wiper_status = slot.get("wiper", False)
-        if wiper_status: 
+        if wiper_status:
             run_wiper(3)
         logger.debug(f"Assigning camera config to {camera_name}")
         try: 
@@ -75,19 +92,22 @@ def capture_images(slot):
                 camera.exposure_mode = exposure_mode 
                 camera.exposure_compensation = exposure_compensation 
                 camera.shutter_speed = shutter_speed
+                camera.annotate_text_size = 10
                 PWM.switch_on(light)
                 logger.debug("Entering continuous capture")
+                sensor_data = sensors.get_sensor_data()
+                camera.annotate_text =  annotate_text_string(sensor_data)
                 for f in camera.capture_continuous(f'{EXTERNAL_DRIVE}/{camera_name}_'+'img{timestamp:%Y-%m-%d-%H-%M-%S}.jpg', use_video_port=True):
                     PWM.switch_off()
                     currenttime = datetime.now()
                     if currenttime < slot["stop"]:
                         sleep(frequency-1)
-                        sensor.write_sensor_data()
-                        sensor_data = sensor.get_sensor_data()
+                        sensors.write_sensor_data()
+                        sensor_data = sensors.get_sensor_data()
                         sensor_data["camera_name"] = camera_name
-                        camera.exif_tags["IFDO.ImageDescription"] = json.dumps(sensor_data)
-                    else: 
-                        PWM.switch_off() 
+                        camera.annotate_text = annotate_text_string(sensor_data)
+                    else:
+                        PWM.switch_off()
                         break
         except Exception as err:
             PWM.switch_off() 
@@ -97,9 +117,9 @@ def capture_images(slot):
         PWM.switch_off()
         logger.error(err)
 
-def start_capture(slot):
+def start_capture(slot, sensors):
     logger.debug("Going to capture")
     if slot["video"]:
-        capture_video(slot)
+        capture_video(slot, sensors)
     else:
-        capture_images(slot)
+        capture_images(slot, sensors)

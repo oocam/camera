@@ -6,8 +6,9 @@ from .upload import start_upload
 from datetime import datetime, timedelta
 import os
 from logger import logger
+from time import sleep
 
-def camera_thread():
+def camera_thread(sensors):
     # load the schedule from the schedule json
     camera_schedule = Scheduler()
     PWM.switch_off()
@@ -32,7 +33,7 @@ def camera_thread():
                 except err:
                     logger.error(err)
             else:
-                start_capture(slot)
+                start_capture(slot, sensors)
         # else check when the next schedule is
         next_slot = camera_schedule.next_future_timeslot()
         slot_index = camera_schedule.should_start()
@@ -44,7 +45,6 @@ def camera_thread():
                 shutdown_time = shutdown_time.strftime("%d %H:%M")
                 reboot_time = next_slot["start"] - timedelta(minutes=2)
                 reboot_time = reboot_time.strftime("%d %H:%M:%S")
-
                 reboot_cmd = (
                     'sudo sh /home/pi/openoceancamera/wittypi/wittycam.sh 5 "' + reboot_time + '"'
                 )
@@ -57,3 +57,4 @@ def camera_thread():
                 os.system(shutdown_cmd)
                 logger.info(f"The camera will shut down at {shutdown_time}")
                 break
+        sleep(1)
