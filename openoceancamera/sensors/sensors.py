@@ -138,6 +138,7 @@ class Sensor:
         else:
             file_mode = "w"
         try:
+            self.read_sensor_data()
             sensor_data_object = {
                 "pressure": self.pressure, 
                 "temperature" : self.temperature, 
