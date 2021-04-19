@@ -33,7 +33,7 @@ def camera_thread():
                 except err:
                     logger.error(err)
             else:
-                start_capture(slot, sensors)
+                start_capture(slot)
         # else check when the next schedule is
         next_slot = camera_schedule.next_future_timeslot()
         slot_index = camera_schedule.should_start()
