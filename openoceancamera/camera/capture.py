@@ -15,15 +15,15 @@ from wiper import run_wiper
 def annotate_text_string(sensor_data):
     result = ""
     if not sensor_data["pressure"] == -1:
-        result += "Pressure: " + sensor_data["pressure"] + " "
+        result += "Pressure: " + str(sensor_data["pressure"]) + " "
     if not sensor_data["temperature"] == -1:
-        result += "Temperature: " + sensor_data["temperature"] + " "
+        result += "Temperature: " + str(sensor_data["temperature"]) + " "
     if not sensor_data["depth"] == -1:
-        result += "Depth: " + sensor_data["depth"] + " "
+        result += "Depth: " + str(sensor_data["depth"]) + " "
     if not sensor_data["luminosity"] == -1:
-        result += "Luminosity: " + sensor_data["luminosity"] + " "
+        result += "Luminosity: " + str(sensor_data["luminosity"]) + " "
     if not sensor_data["gps"]["lat"] == -1 and not sensor_data["gps"]["lng"] == -1:
-        result += "Lat: " + sensor_data["gps"]["lat"] + "Lng: " + sensor_data["gps"]["lng"] + " "
+        result += "Lat: " + str(sensor_data["gps"]["lat"]) + "Lng: " + str(sensor_data["gps"]["lng"]) + " "
     return result
 def capture_video(slot, sensors):
     resolution = slot["resolution"]
