@@ -12,18 +12,14 @@ from .gps import GPS
 
 class Sensor:
     def __init__(self):
-        super().__init__()
-        self.pressure_data = -1
-        self.temperature_data = -1
-        self.luminosity_data = -1
+        self.luminosity = -1
+        self.temperature = -1
+        self.pressure = -1
         self.depth = -1
-        self.ms_temperature_data = -1
-        self.coordinates = {
+        self.gps_coordinates = {
           "lat": -1,
           "lng": -1
         }
-        self.log_filename = LOG_FILE
-
         try:
             self.gps = GPS()
         except Exception as err: 
@@ -67,7 +63,7 @@ class Sensor:
     def read_sensor_data(self):
         if hasattr(self, 'luminosity_sensor'):
             try:
-                self.luminosity_data = self.luminosity_sensor.luminosity() 
+                self.luminosity = self.luminosity_sensor.luminosity() 
             except LuminositySensorCannotReadException as err: 
                 self.luminosity_data = -1 
                 logger.error(f"Error: {err}")
@@ -93,24 +89,55 @@ class Sensor:
         
         if hasattr(self, 'pressure_sensor'):
             try:
-                self.ms_temperature_data = self.pressure_sensor.temperature()
+                self.pressure = self.pressure_sensor.absolute_pressure()
+                self.temperature = self.pressure_sensor.temperature()
+                self.depth = self.pressure_sensor.depth()
             except PressureSensorCannotReadException as err:
-                self.ms_temperature_data = -1
                 logger.error(f"Error: {err}")
             except Exception as err:
-                logger.error(f"Sensor error: {err}")
-        else:
-            self.ms_temperature_data = -1
+                logger.error(f"Pressure sensor: {err}")
+        
+        if hasattr(self, 'temperature_sensor'):
+            try:
+                temperature = self.temperature_sensor.temperature()
+            except Exception as err:
+                logger.error(f"Pressure sensor: {err}")
 
-    def get_sensor_data(self): 
-        return { 
-            "pressure": self.pressure_data, 
-            "temperature" : self.temperature_data, 
-            "mstemp": self.ms_temperature_data,
+        return {
+            "pressure": self.pressure, 
+            "temperature" : self.temperature, 
+            "mstemp": self.temperature,
             "depth": self.depth,
-            "luminosity" : self.luminosity_data,
-            "gps": self.coordinates
+            "luminosity" : self.luminosity,
+            "gps": self.gps_coordinates
         }
+    
+
+    def get_sensor_data():
+        return {
+            "pressure": self.pressure, 
+            "temperature" : self.temperature, 
+            "mstemp": self.temperature,
+            "depth": self.depth,
+            "luminosity" : self.luminosity,
+            "gps": self.gps_coordinates
+        }
+
+    def write_sensor_data(self, sensor_data_object=None):
+        if os.path.exists(LOG_FILE):
+            file_mode = "a"
+        else:
+            file_mode = "w"
+        try:
+            if sensor_data_object is not None:
+                sensor_data_object["timestamp"] = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+                sensor_data_json = json.dumps(sensor_data_object)
+                with open(LOG_FILE, file_mode) as f:
+                    f.write(sensor_data_json)
+                    f.write("\n")
+        except Exception as err:
+            logger.error(err)
+            return None
 
 class PressureSensorNotConnectedException(Exception):
     def __init__(self, *args, **kwargs):
@@ -187,6 +214,10 @@ class LuminositySensor(TSL2561):
                 "Could not read luminosity values"
             )
 
+
+def start_sensor_readings(sensors: Sensor):
+    while True:
+        sensors.read_sensor_data()
+
 if __name__ == "__main__":
     pass
-

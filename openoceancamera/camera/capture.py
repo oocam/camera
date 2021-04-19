@@ -11,7 +11,7 @@ from restart import reboot_camera
 from .utils import get_camera_name
 from wiper import run_wiper
 
-def capture_video(slot):
+def capture_video(slot, sensors):
     resolution = slot["resolution"]
     framerate = slot["framerate"]
     iso = slot["iso"]
@@ -42,8 +42,8 @@ def capture_video(slot):
             sensor_data = sensor.get_sensor_data()
             while current_time < slot["stop"]: 
                 camera.annotate_text = f"{current_time.strftime('%Y-%m-%d %H:%M:%S')} @ {slot['framerate']} fps"
-                sensor.write_sensor_data() 
-                sensor_data = sensor.get_sensor_data()
+                sensors.write_sensor_data() 
+                sensor_data = sensors.get_sensor_data()
                 sleep(1)
                 current_time = datetime.now() 
             camera.stop_recording() 
@@ -53,7 +53,7 @@ def capture_video(slot):
         logger.error(err)
         reboot_camera()
 
-def capture_images(slot):
+def capture_images(slot, sensors):
     try:
         logger.debug("Going to set camera config")
         resolution = slot["resolution"]
@@ -63,7 +63,6 @@ def capture_images(slot):
         light = slot["light"]
         frequency = slot["frequency"]
         shutter_speed = slot["shutter_speed"]
-        sensor = Sensor()
         camera_name = get_camera_name()
         wiper_status = slot.get("wiper", False)
         if wiper_status: 
@@ -77,13 +76,15 @@ def capture_images(slot):
                 camera.shutter_speed = shutter_speed
                 PWM.switch_on(light)
                 logger.debug("Entering continuous capture")
+                sensor_data = sensors.write_sensor_data()
+                camera.exif_tags["IFDO.ImageDescription"] = json.dumps(sensor_data)
                 for f in camera.capture_continuous(f'{EXTERNAL_DRIVE}/{camera_name}_'+'img{timestamp:%Y-%m-%d-%H-%M-%S}.jpg', use_video_port=True):
                     PWM.switch_off()
                     currenttime = datetime.now()
                     if currenttime < slot["stop"]:
                         sleep(frequency-1)
-                        sensor.write_sensor_data()
-                        sensor_data = sensor.get_sensor_data()
+                        sensors.write_sensor_data()
+                        sensor_data = sensors.get_sensor_data()
                         sensor_data["camera_name"] = camera_name
                         camera.exif_tags["IFDO.ImageDescription"] = json.dumps(sensor_data)
                     else: 
@@ -97,9 +98,9 @@ def capture_images(slot):
         PWM.switch_off()
         logger.error(err)
 
-def start_capture(slot):
+def start_capture(slot, sensors):
     logger.debug("Going to capture")
     if slot["video"]:
-        capture_video(slot)
+        capture_video(slot, sensors)
     else:
-        capture_images(slot)
+        capture_images(slot, sensors)
