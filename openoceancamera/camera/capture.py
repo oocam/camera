@@ -25,6 +25,8 @@ def annotate_text_string(sensor_data):
     if not sensor_data["gps"]["lat"] == -1 and not sensor_data["gps"]["lng"] == -1:
         result += "Lat: " + str(sensor_data["gps"]["lat"]) + "Lng: " + str(sensor_data["gps"]["lng"]) + " "
     return result
+
+
 def capture_video(slot, sensors):
     resolution = slot["resolution"]
     framerate = slot["framerate"]
@@ -92,8 +94,7 @@ def capture_images(slot, sensors: Sensor):
                 PWM.switch_on(light)
                 logger.debug("Entering continuous capture")
                 sensor_data = sensors.get_sensor_data()
-                sensor_string = annotate_text_string(sensor_data)
-                camera.annotate_text(sensor_string)
+                camera.annotate_text =  annotate_text_string(sensor_data)
                 for f in camera.capture_continuous(f'{EXTERNAL_DRIVE}/{camera_name}_'+'img{timestamp:%Y-%m-%d-%H-%M-%S}.jpg', use_video_port=True):
                     PWM.switch_off()
                     currenttime = datetime.now()
@@ -102,8 +103,7 @@ def capture_images(slot, sensors: Sensor):
                         sensors.write_sensor_data()
                         sensor_data = sensors.get_sensor_data()
                         sensor_data["camera_name"] = camera_name
-                        sensor_string = annotate_text_string(sensor_data)
-                        camera.annotate_text(sensor_string)
+                        camera.annotate_text = annotate_text_string(sensor_data)
                     else:
                         PWM.switch_off()
                         break
