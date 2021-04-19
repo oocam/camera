@@ -114,7 +114,7 @@ class Sensor:
         }
     
 
-    def get_sensor_data():
+    def get_sensor_data(self):
         return {
             "pressure": self.pressure, 
             "temperature" : self.temperature, 
