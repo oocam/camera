@@ -114,15 +114,24 @@ class Sensor:
         }
     
 
-    def get_sensor_data(self):
-        return {
-            "pressure": self.pressure, 
-            "temperature" : self.temperature, 
-            "mstemp": self.temperature,
-            "depth": self.depth,
-            "luminosity" : self.luminosity,
-            "gps": self.gps_coordinates
-        }
+    def get_sensor_data(self, short=False):
+        if short:
+            return {
+                "p": self.pressure, 
+                "t" : self.temperature, 
+                "d": self.depth,
+                "l" : self.luminosity,
+                "g": self.gps_coordinates
+            }
+        else:
+            return {
+                "pressure": self.pressure, 
+                "temperature" : self.temperature, 
+                "mstemp": self.temperature,
+                "depth": self.depth,
+                "luminosity" : self.luminosity,
+                "gps": self.gps_coordinates
+            }
 
     def write_sensor_data(self, sensor_data_object=None):
         if os.path.exists(LOG_FILE):

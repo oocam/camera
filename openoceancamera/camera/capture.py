@@ -39,11 +39,11 @@ def capture_video(slot, sensors):
             camera.start_recording(filename, format="h264")
             current_time = datetime.now() 
             sensor.write_sensor_data() 
-            sensor_data = sensor.get_sensor_data()
+            sensor_data = sensor.get_sensor_data(short=True)
             while current_time < slot["stop"]: 
                 camera.annotate_text = f"{current_time.strftime('%Y-%m-%d %H:%M:%S')} @ {slot['framerate']} fps"
                 sensors.write_sensor_data() 
-                sensor_data = sensors.get_sensor_data()
+                sensor_data = sensors.get_sensor_data(short=True)
                 sleep(1)
                 current_time = datetime.now() 
             camera.stop_recording() 
@@ -76,7 +76,7 @@ def capture_images(slot, sensors: Sensor):
                 camera.shutter_speed = shutter_speed
                 PWM.switch_on(light)
                 logger.debug("Entering continuous capture")
-                sensor_data = sensors.get_sensor_data()
+                sensor_data = sensors.get_sensor_data(short=True)
                 camera.exif_tags["IFDO.ImageDescription"] = json.dumps(sensor_data)
                 for f in camera.capture_continuous(f'{EXTERNAL_DRIVE}/{camera_name}_'+'img{timestamp:%Y-%m-%d-%H-%M-%S}.jpg', use_video_port=True):
                     PWM.switch_off()
@@ -84,7 +84,7 @@ def capture_images(slot, sensors: Sensor):
                     if currenttime < slot["stop"]:
                         sleep(frequency-1)
                         sensors.write_sensor_data()
-                        sensor_data = sensors.get_sensor_data()
+                        sensor_data = sensors.get_sensor_data(short=True)
                         sensor_data["camera_name"] = camera_name
                         camera.exif_tags["IFDO.ImageDescription"] = json.dumps(sensor_data)
                     else: 
