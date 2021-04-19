@@ -129,12 +129,19 @@ class Sensor:
         else:
             file_mode = "w"
         try:
-            if sensor_data_object is not None:
-                sensor_data_object["timestamp"] = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
-                sensor_data_json = json.dumps(sensor_data_object)
-                with open(LOG_FILE, file_mode) as f:
-                    f.write(sensor_data_json)
-                    f.write("\n")
+            sensor_data_object = {
+                "pressure": self.pressure, 
+                "temperature" : self.temperature, 
+                "mstemp": self.temperature,
+                "depth": self.depth,
+                "luminosity" : self.luminosity,
+                "gps": self.gps_coordinates
+            }
+            sensor_data_object["timestamp"] = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+            sensor_data_json = json.dumps(sensor_data_object)
+            with open(LOG_FILE, file_mode) as f:
+                f.write(sensor_data_json)
+                f.write("\n")
         except Exception as err:
             logger.error(err)
             return None

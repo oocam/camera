@@ -53,7 +53,7 @@ def capture_video(slot, sensors):
         logger.error(err)
         reboot_camera()
 
-def capture_images(slot, sensors):
+def capture_images(slot, sensors: Sensor):
     try:
         logger.debug("Going to set camera config")
         resolution = slot["resolution"]
