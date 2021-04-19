@@ -8,7 +8,7 @@ import os
 from logger import logger
 from time import sleep
 
-def camera_thread(sensors):
+def camera_thread():
     # load the schedule from the schedule json
     camera_schedule = Scheduler()
     PWM.switch_off()
