@@ -39,7 +39,7 @@ def camera_thread():
         slot_index = camera_schedule.should_start()
         if slot_index == -1 and next_slot is not None:
             # if the camera needs to shutdown, do wittypi stuff to shutdown the camera and set restart time and stop this loop
-            mins_to_next_slot = int(camera_schedule.time_to_nearest_schedule() / 60)
+            mins_to_next_slot = int(camera_schedule.time_to_slot(next_slot) / 60)
             if mins_to_next_slot > 10:
                 shutdown_time = datetime.now() + timedelta(minutes=2)
                 shutdown_time = shutdown_time.strftime("%d %H:%M")

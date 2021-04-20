@@ -53,7 +53,6 @@ class Scheduler(object):
     
     def time_to_nearest_schedule(self):
         possible_slots = []
-
         # Get the future slots
         for slot in self.schedule_data:
             if slot["start"] >= datetime.now():
@@ -61,12 +60,10 @@ class Scheduler(object):
 
         # Sorts the slots in case they may not be
         possible_slots = sorted(possible_slots, key=lambda x: x["start"])
-
-        print(f"The time now is: {datetime.now()}")
-        print(f"The future slots are: {possible_slots}")
-
         # Take the difference between the most recent slot's start time and time now
         delta = possible_slots[0]["start"] - datetime.now()
-        print(f"The time difference is: {delta}")
-        # Returns an integer value for the time difference in seconds
+        return int(delta.total_seconds())
+
+    def time_to_slot(self, slot):
+        delta = slot["start"] - datetime.now()
         return int(delta.total_seconds())
