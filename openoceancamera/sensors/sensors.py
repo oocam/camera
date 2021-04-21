@@ -53,10 +53,11 @@ class Sensor:
         if hasattr(self, 'gps'):
             try:
                 self.gps.update()
-                self.coordinates = {
-                  "lat": self.gps.latitude,
-                  "lng": self.gps.longitude
-                }
+                if self.gps.has_fix:
+                    self.gps_coordinates = {
+                      "lat": self.gps.latitude,
+                      "lng": self.gps.longitude
+                    }
             except Exception as err:
                 logger.error(f"GPS not connected: {err}")
         else:
