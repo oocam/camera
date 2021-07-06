@@ -86,13 +86,9 @@ class AtlasI2C:
         # the sensors, and to load existing calibration data to the sensors 
         # again.
         # However, I don't know where exactly to put these methods, so they're here.
-
-        # Currently, this 
-        # 1) takes the cal data from the sensor, saves it to _cal_data
-        # 2) takes cal data from _cal_data attribute, and re saves it to the sensor.
-        # Basically going in a circle...
-        self._set_cal_data()     
+        self._set_cal_data()
         self._import_calibration()
+        #self.initialise_sensor()
 	
     @property
     def long_timeout(self):
@@ -238,16 +234,22 @@ class AtlasI2C:
         self.query('factory')
         return True
 
-    def _set_cal_data(self):
+    def _set_cal_data(self) -> bool:
         """Saves the calibration data from the sensor.
 
         Saves this data to an instance attribute called '_cal_data'.
         """
-        info = self.query('Export,?').split(',')
-        num_strings = int(info[1])
-        self._cal_data = []
-        for n in range(num_strings):
-            self._cal_data.append((self.query('Export', 12)))
+        try:
+            info = self.query('Export,?').split(',')
+            num_strings = int(info[1]) 
+            self._cal_data = []
+            for n in range(num_strings):
+                self._cal_data.append((self.query('Export', 12)))
+            return True
+        except Exception as err:
+            print(f'Error: {err}')
+            return False
+        
     
     def _import_calibration(self) -> bool:
         """Accesses the saved calibration data and uses it to calibrate the sensor.
@@ -267,16 +269,22 @@ class AtlasI2C:
             print('Sensor calibrated!')
         else:
             print('Error: Calibration data has not been saved yet\n')
+            return False
         return True
             
-    def get_data(self) -> str:
+    def _get_data(self) -> List[str]:
         """Gets the data measurements from the sensor.
 
-        RETURNS: A string of CSV data measurements.
+        RETURNS: A list of str data measurements.
         """
-        data = self.query('r')
-        return data
-
+        raw_data = self.query('r')
+        try:
+            data = raw_data.split(',')
+            return data
+        except:
+            return [raw_data]    
+            # This will only happen with the pH sensor, as it only returns one parameter.
+        
     def sleep(self) -> bool:
         """Puts the sensor in sleep mode for power saving.
         
@@ -324,6 +332,8 @@ class AtlasI2C:
     def initialise_sensor(self) -> bool:
         if (not hasattr(self, '_cal_data')):
             self._set_cal_data()
+        time.sleep(2)
         self.factory_reset()
+        time.sleep(2)
         self._import_calibration()
         return True
