@@ -62,10 +62,10 @@ class TSYS01(object):
             print("No bus!")
             return False
 
-        # Request conversion
+        # Request conversion.
         self._bus.write_byte(self._TSYS01_ADDR, self._TSYS01_CONVERT)
 
-        # Max conversion time = 9.04 ms
+        # Max conversion time = 9.04 ms.
         sleep(0.01)
 
         adc = self._bus.read_i2c_block_data(self._TSYS01_ADDR, self._TSYS01_READ, 3)
@@ -73,8 +73,8 @@ class TSYS01(object):
         self._calculate(adc)
         return True
 
-    # Temperature in requested units
-    # default degrees C
+    # Temperature in requested units.
+    # default degrees C.
     def temperature(self, conversion=UNITS_Centigrade):
         if conversion == UNITS_Farenheit:
             return (9 / 5) * self._temperature + 32
@@ -82,7 +82,7 @@ class TSYS01(object):
             return self._temperature - 273
         return self._temperature
 
-    # Cribbed from datasheet
+    # Cribbed from datasheet.
     def _calculate(self, adc):
         adc16 = adc / 256
         self._temperature = (
