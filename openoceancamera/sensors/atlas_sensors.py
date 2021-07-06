@@ -27,8 +27,8 @@ Pinouts:
     OFF - Trim and leave unconnected. 
 """
 from os import strerror
-from typing import List
-from .AtlasI2C import AtlasI2C
+from typing import List, Union
+from AtlasI2C import AtlasI2C
 
 
 class EC_Sensor(AtlasI2C):
@@ -161,6 +161,27 @@ class EC_Sensor(AtlasI2C):
         """Shows the current probe type/model that is set."""
         return self.query('K,?')
 
+    def get_conductivity(self) -> float:
+        """Explicitly returns the electrical conductivity measurement."""
+        return float(self._get_data()[0])
+    
+    def get_tds(self) -> float:
+        """Explicitly returns the total dissolved solids measurement."""
+        return float(self._get_data()[1])
+    
+    def get_salinity(self) -> float:
+        """Explicitly returns the salinity measurement."""
+        return float(self._get_data()[2])
+    
+    def get_specific_gravity(self) -> float:
+        """Explicitly returns the specific gravity measurement."""
+        try:
+            value = self._get_data()[3].rstrip('\x00')
+            return float(value)
+        except Exception as err:
+            print(f'Error: {err}')
+            return value
+
 
 class DO_Sensor(AtlasI2C):
     """Final class to control the Atlas Scientific dissolved oxygen sensor (EZO-DO).
@@ -198,7 +219,23 @@ class DO_Sensor(AtlasI2C):
 
         for param in self._PARAMS:    # Ensures that all measurement parameters are enabled.
             self._write(f'O,{param},1')
+
+        # self._dissolved_oxygen = 0
+        # self._percentage_oxygen = 0
+
+    def get_do(self) -> float:
+        """Explicitly returns the dissolved oxygen measurement."""
+        return float(self._get_data()[0])
     
+    def get_percent_oxygen(self) -> Union[float, str]:
+        """Explicitly returns the percentage oxygen measurement."""
+        value = self._get_data()[1]
+        try:
+            return float(value.rstrip('\x00'))     # Float.
+        except Exception as err:
+            print(f'FACK: {err}')
+            return value     # String.
+
     def get_header_row(self) -> str:
         """Gets the measurement params and also shows units for each one.
 
@@ -305,7 +342,13 @@ class PH_Sensor(AtlasI2C):
         See AtlasI2C's (super class) __init__ method for more information.
         """
         super().__init__(moduletype=moduletype, name=name, bus=bus, address=address)
-    
+        # self._ph = 0
+
+    def get_ph(self) -> float:
+        """Explicitly returns the pH measurement."""
+        pH_string = self._get_data()[0].rstrip('\x00')
+        return float(pH_string)
+
     def get_header_row(self) -> str:
         """Gets the measurement param and also shows the unit for it.
 
@@ -350,6 +393,9 @@ class PH_Sensor(AtlasI2C):
         return self.query('slope,?')
 
 
+# TODO: I don't think that this is needed!
+
+
 def get_all_sensor_data(device_list: List[object]) -> str:
     """Gets the readings from all connected sensors
 
@@ -361,7 +407,7 @@ def get_all_sensor_data(device_list: List[object]) -> str:
     """
     data = ''
     for sensor in device_list:
-        readings = sensor.get_data()
+        readings: str = sensor._get_data()
         data += f'{readings},'
     return data
 
