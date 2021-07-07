@@ -350,10 +350,15 @@ class AtlasI2C:
         return valid, error_code
 
     def initialise_sensor(self) -> bool:
-        if (not hasattr(self, '_cal_data')):
-            self._set_cal_data()
-        time.sleep(2)
-        self.factory_reset()
-        time.sleep(2)
-        self._import_calibration()
-        return True
+        """Initialise sensor by factory resetting it and calibrating.
+        Returns:
+            True if successful, False if not.
+        """
+        try:
+            if (not hasattr(self, '_cal_data')):
+                self._set_cal_data()
+            self.factory_reset()
+            self._import_calibration()
+            return True
+        except:
+            return False
