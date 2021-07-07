@@ -18,6 +18,10 @@ import time
 import copy
 from typing import List
 
+# TODO:
+# If it works, see where to add it (reinitialise sensor method)
+# 2) Review the methods, make sure they're all needed, even if the use is just 
+# once in a while.
 
 class AtlasI2C:
     """An abstract, parent/super class for Atlas Sensors.
@@ -32,13 +36,11 @@ class AtlasI2C:
         module: str; The name of the sensor module/type.
     
     Public Methods:
-        set_i2c_address: Sets I2C address for communication with sensor.
         query: Writes and reads from device, returns response.
         sleep: Puts device to sleep.
         get_device_info: Gets basic info of sensor (see method docstring for more).
         close: Closes IO streams.
         factory_reset: Resets the device to factory settings.
-        get_data: Reads data measurements from sensor and returns them.
         list_i2c_devices: Lists addresses of all devices connected to I2C bus.
     
     Example Uses:
@@ -77,7 +79,7 @@ class AtlasI2C:
                                   mode='wb', 
                                   buffering=0)
 
-        self.set_i2c_address(self._address)    # Sets the I2C address.
+        self._set_i2c_address(self._address)    # Sets the I2C address.
         self.name = name
         self.module = moduletype
 
@@ -88,7 +90,6 @@ class AtlasI2C:
         # However, I don't know where exactly to put these methods, so they're here.
         self._set_cal_data()
         self._import_calibration()
-        #self.initialise_sensor()
 	
     @property
     def long_timeout(self):
@@ -118,7 +119,7 @@ class AtlasI2C:
         except Exception:
             pass
         
-    def set_i2c_address(self, addr: int) -> bool:
+    def _set_i2c_address(self, addr: int) -> bool:
         """Sets the I2C address for communications with the slave sensor.
 
         The commands for I2C dev using the IOCTL functions are 
@@ -229,10 +230,21 @@ class AtlasI2C:
             timeout = self._short_timeout
         return timeout
 
+    # TODO: See if this code works
+
     def factory_reset(self) -> bool:
-        """Performs factory reset on sensor, keeps the I2C mode setting."""
-        self.query('factory')
-        return True
+        """Performs factory reset on sensor, keeps the I2C mode setting.
+        
+        Returns:
+            True if successful, False if not.
+        """
+        try:
+            self.query('r')
+            self.query('Factory')
+            return True
+        except Exception as err:
+            print(f'Error: {err}')
+            return False
 
     def _set_cal_data(self) -> bool:
         """Saves the calibration data from the sensor.
@@ -264,13 +276,16 @@ class AtlasI2C:
             imported in one go, to all the sensors.
         """
         if hasattr(self,'_cal_data'):
-            for string in self._cal_data:
-                self._write(f'import,{string}')
-            print('Sensor calibrated!')
+            try:
+                for string in self._cal_data:
+                    self._write(f'import,{string}')
+                print('Sensor calibrated!')
+                return True
+            except:
+                return False
         else:
             print('Error: Calibration data has not been saved yet\n')
             return False
-        return True
             
     def _get_data(self) -> List[str]:
         """Gets the data measurements from the sensor.
@@ -289,9 +304,14 @@ class AtlasI2C:
         """Puts the sensor in sleep mode for power saving.
         
         The sensor can be woken up with any command.
+
+        Returns: True if successful, False if not.
         """
-        self._write(self, 'sleep')
-        return bool
+        try:
+            self.query('sleep')
+            return True
+        except:
+            return False
     
     def close(self) -> bool:
         """Closes the I2C IO streams for reading/writing to the sensor."""
