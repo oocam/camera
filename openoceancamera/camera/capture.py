@@ -111,6 +111,7 @@ def capture_images(slot):
                         sensor_data = sensors.get_sensor_data()
                         sensor_data["camera_name"] = camera_name
                         camera.annotate_text = annotate_text_string(sensor_data)
+                        PWM.switch_on(light)
                     else:
                         PWM.switch_off()
                         break
