@@ -28,10 +28,9 @@ Pinouts:
 """
 from os import strerror
 from typing import List, Union
-from AtlasI2C import AtlasI2C
+from atlasI2C import AtlasI2C
 
 # TODO:
-# 1) initialise sensor method work? mentioned in docstrings.
 # 2) see if get header row method needed at all.
 # 3) Ask UG about compensation methods and conversion methods etc... How to implement?
 
@@ -52,7 +51,7 @@ class EC_Sensor(AtlasI2C):
     
     Example Use:
         ec_sensor = EC_Sensor()    # Sets up the class for the sensor, it automatically gets initialised.
-        ec_sensor.initialise_sensor()    # To re initialise it if you want.  # TODO This no work!!!
+        ec_sensor.initialise_sensor()    # To re initialise it if you want.
         
         print(ec_sensor.get_header_rows())    # Shows a header row to start the data file with.
         print(ec_sensor.get_data())   # Takes readings.
