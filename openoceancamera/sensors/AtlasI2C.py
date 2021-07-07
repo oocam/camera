@@ -10,7 +10,7 @@ Note:
     per Google Python Style Guide:
     https://github.com/google/styleguide/blob/gh-pages/pyguide.md#doc-function-args
 """
-from abc import abstractmethod
+from abc import abstractmethod, ABC
 import io
 import sys
 import fcntl
@@ -19,11 +19,10 @@ import copy
 from typing import List
 
 # TODO:
-# If it works, see where to add it (reinitialise sensor method)
 # 2) Review the methods, make sure they're all needed, even if the use is just 
 # once in a while.
 
-class AtlasI2C:
+class AtlasI2C(ABC):
     """An abstract, parent/super class for Atlas Sensors.
 
     This class functions as a parent/super class for 3 subclasses:
@@ -83,11 +82,6 @@ class AtlasI2C:
         self.name = name
         self.module = moduletype
 
-        # TODO
-        # The idea here is to be able to save the calibration settings from
-        # the sensors, and to load existing calibration data to the sensors 
-        # again.
-        # However, I don't know where exactly to put these methods, so they're here.
         self._set_cal_data()
         self._import_calibration()
 	
@@ -230,8 +224,6 @@ class AtlasI2C:
             timeout = self._short_timeout
         return timeout
 
-    # TODO: See if this code works
-
     def factory_reset(self) -> bool:
         """Performs factory reset on sensor, keeps the I2C mode setting.
         
@@ -262,7 +254,6 @@ class AtlasI2C:
             print(f'Error: {err}')
             return False
         
-    
     def _import_calibration(self) -> bool:
         """Accesses the saved calibration data and uses it to calibrate the sensor.
 
@@ -298,7 +289,8 @@ class AtlasI2C:
             return data
         except:
             return [raw_data]    
-            # This will only happen with the pH sensor, as it only returns one parameter.
+            # This will only happen with the pH sensor, as it only 
+            # returns one parameter.
         
     def sleep(self) -> bool:
         """Puts the sensor in sleep mode for power saving.
@@ -345,7 +337,7 @@ class AtlasI2C:
             else:
                 error_code = str(response[0])
                 
-            if error_code != '1': #1:
+            if error_code != '1':
                 valid = False
         return valid, error_code
 
