@@ -93,11 +93,11 @@ class EC_Sensor(AtlasI2C):
     # read method in the AtlasI2C base class. Might just return none.
     
     # TODO: 1) Find what following function response would be.
-
+    
     # TODO: 2) Change the return to True, instead of 'response', and ask
     # UG where to put it exactly.
 
-    def set_TDS_conv(self, conv_factor: float = 0.54) -> str:
+    def set_TDS_conv(self, conv_factor: float = 0.54) -> bool:
         """Set custom conversion factor for the TDS measurement.
 
         TDS is total dissolved solids, and it's measured like this:
@@ -107,16 +107,18 @@ class EC_Sensor(AtlasI2C):
              conv_factor: default value = 0.54. Has to be between 0.01 and 0.95.
         
         Returns:
-            Response code string.
+            True if successful, False if not.
         """        
         if type(conv_factor) == float:
             if (0.01 <= conv_factor <= 1.00):
                 response = self.query(f'TDS,{conv_factor}')
-                return response
+                return True
             else:
                 print('Conversion factor invalid! Should be between 0.01-1.00.')
+                return False
         else:
             print('\nShould be a decimal/floating point number')
+            return False
 
     def get_TDS_conv(self) -> str:
         """Gets the currently set TDS conversion factor (str)."""
@@ -176,10 +178,10 @@ class EC_Sensor(AtlasI2C):
         """Explicitly returns the salinity measurement."""
         return float(self._get_data()[2])
     
-    def get_specific_gravity(self) -> float:
+    def get_specific_gravity(self) -> Union[float, str]:
         """Explicitly returns the specific gravity measurement."""
         try:
-            value = self._get_data()[3].rstrip('\x00')
+            value: str = self._get_data()[3].rstrip('\x00')
             return float(value)
         except Exception as err:
             print(f'Error: {err}')
@@ -399,7 +401,7 @@ class PH_Sensor(AtlasI2C):
 # TODO: I don't think that this is needed!
 
 
-def get_all_sensor_data(device_list: List[object]) -> str:
+def get_all_sensor_data(device_list) -> str:
     """Gets the readings from all connected sensors
 
     Args:
@@ -415,7 +417,7 @@ def get_all_sensor_data(device_list: List[object]) -> str:
     return data
 
 
-def get_all_header_rows(device_list: List[object]) -> str:
+def get_all_header_rows(device_list) -> str:
     """Gets the header rows from all connected sensors; makes one combined header row.
     
     Args:

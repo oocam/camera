@@ -160,11 +160,10 @@ class AtlasI2C(ABC):
                 i2c_devices.append(i)
             except IOError:
                 pass
-        
         self.set_i2c_address(prev_addr)    # Restore the previous address.
         return i2c_devices
             
-    def _get_response(self, raw_data: bytes):
+    def _get_response(self, raw_data):
         if self._app_using_python_two():
             response = [i for i in raw_data if i != '\x00']
         else:
