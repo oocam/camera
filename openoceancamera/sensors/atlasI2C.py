@@ -16,7 +16,7 @@ import sys
 import fcntl
 import time
 import copy
-from typing import List
+from typing import List, Optional
 
 
 # TODO:
@@ -155,12 +155,12 @@ class AtlasI2C(ABC):
         i2c_devices = []
         for i in range(0, 128):
             try:
-                self.set_i2c_address(i)
+                self._set_i2c_address(i)
                 self._read(1)
                 i2c_devices.append(i)
             except IOError:
                 pass
-        self.set_i2c_address(prev_addr)    # Restore the previous address.
+        self._set_i2c_address(prev_addr)    # Restore the previous address.
         return i2c_devices
             
     def _get_response(self, raw_data):
@@ -216,7 +216,7 @@ class AtlasI2C(ABC):
             time.sleep(current_timeout)
             return self._read(num_of_bytes)
 
-    def _get_command_timeout(self, command: str) -> float:
+    def _get_command_timeout(self, command: str) -> Optional[float]:
         timeout = None
         if command.upper().startswith(self._LONG_TIMEOUT_COMMANDS):
             timeout = self._long_timeout
