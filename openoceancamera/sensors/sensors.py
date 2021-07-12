@@ -181,12 +181,19 @@ class Sensor:
             self.read_sensor_data()
             sensor_data_object = {
                 "timestamp": datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),
-                "luminosity": self.luminosity_data,
-                "temp": self.temperature_data,
-                "mstemp": self.ms_temperature_data,
+                "luminosity": self.luminosity,
+                "temp": self.temperature,
+                "mstemp": self.temperature,
                 "depth": self.depth,
-                "pressure": self.pressure_data,
-                "gps": self.coordinates
+                "pressure": self.pressure,
+                "gps": self.coordinates,
+                "conductivity": self.conductivity,
+                "tds": self.total_dissolved_solids,
+                "salinity": self.salinity,
+                "SG": self.specific_gravity,
+                "dissolved oxygen": self.dissolved_oxygen,
+                "% oxygen": self.percentage_oxygen,
+                "pH": self.pH
             }
             sensor_data_json = json.dumps(sensor_data_object)
             with open(self.log_filename, file_mode) as f:
@@ -202,7 +209,14 @@ class Sensor:
                 "t" : self.temperature, 
                 "d": self.depth,
                 "l" : self.luminosity,
-                "g": self.gps_coordinates
+                "g": self.gps_coordinates,
+                "c": self.conductivity,
+                "s": self.salinity,
+                "sg": self.specific_gravity,
+                "td": self.total_dissolved_solids,
+                "do": self.dissolved_oxygen,
+                "%": self.percentage_oxygen,
+                "pH": self.pH,
             }
         else:
             return {
@@ -211,7 +225,14 @@ class Sensor:
                 "mstemp": self.temperature,
                 "depth": self.depth,
                 "luminosity" : self.luminosity,
-                "gps": self.gps_coordinates
+                "gps": self.gps_coordinates,
+                "conductivity": self.conductivity,
+                "salinity": self.salinity,
+                "specific gravity": self.specific_gravity,
+                "total dissolved solids": self.total_dissolved_solids,
+                "dissolved oxygen": self.dissolved_oxygen,
+                "percent oxygen": self.percentage_oxygen,
+                "pH": self.pH,
             }
 
     def write_sensor_data(self, sensor_data_object=None) -> None:
@@ -235,7 +256,6 @@ class Sensor:
                 "dissolved oxygen": self.dissolved_oxygen,
                 "percentage oxygen": self.percentage_oxygen,
                 "pH": self.pH,
-
             }
             sensor_data_object["timestamp"] = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
             sensor_data_json = json.dumps(sensor_data_object)
