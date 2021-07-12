@@ -347,7 +347,6 @@ class PH_Sensor(AtlasI2C):
         See AtlasI2C's (super class) __init__ method for more information.
         """
         super().__init__(moduletype=moduletype, name=name, bus=bus, address=address)
-        # self._ph = 0
 
     def get_ph(self) -> float:
         """Explicitly returns the pH measurement."""
