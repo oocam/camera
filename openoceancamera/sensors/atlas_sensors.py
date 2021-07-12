@@ -28,7 +28,7 @@ Pinouts:
 """
 from os import strerror
 from typing import List, Union
-from atlasI2C import AtlasI2C
+from .atlasI2C import AtlasI2C
 
 # TODO:
 # 2) see if get header row method needed at all.
