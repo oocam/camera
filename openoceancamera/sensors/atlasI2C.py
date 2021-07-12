@@ -83,6 +83,7 @@ class AtlasI2C(ABC):
         self.name = name
         self.module = moduletype
 
+        print(self.initialise_sensor())
         self._set_cal_data()
         self._import_calibration()
 	
