@@ -90,7 +90,7 @@ class Sensor:
             except Exception as err:
                 logger.error(f"GPS not connected: {err}")
         else:
-            self.coordinates = {
+            self.gps_coordinates = {
                   "lat": -1,
                   "lng": -1,
                 }
@@ -107,7 +107,7 @@ class Sensor:
         
         if hasattr(self, 'temperature_sensor'):
             try:
-                temperature = self.temperature_sensor.temperature()
+                self.temperature = self.temperature_sensor.temperature()
             except Exception as err:
                 logger.error(f"Pressure sensor: {err}")
 
@@ -158,10 +158,10 @@ class Sensor:
 
         return {
             "pressure": self.pressure, 
-            "temperature" : self.temperature, 
+            "temperature": self.temperature,
             "mstemp": self.temperature,
             "depth": self.depth,
-            "luminosity" : self.luminosity,
+            "luminosity": self.luminosity,
             "gps": self.gps_coordinates,
             "conductivity": self.conductivity,
             "total_dissolved_solids": self.total_dissolved_solids,
@@ -186,7 +186,7 @@ class Sensor:
                 "mstemp": self.temperature,
                 "depth": self.depth,
                 "pressure": self.pressure,
-                "gps": self.coordinates,
+                "gps": self.gps_coordinates,
                 "conductivity": self.conductivity,
                 "tds": self.total_dissolved_solids,
                 "salinity": self.salinity,
@@ -206,9 +206,9 @@ class Sensor:
         if short:
             return {
                 "p": self.pressure, 
-                "t" : self.temperature, 
+                "t": self.temperature,
                 "d": self.depth,
-                "l" : self.luminosity,
+                "l": self.luminosity,
                 "g": self.gps_coordinates,
                 "c": self.conductivity,
                 "s": self.salinity,
@@ -221,10 +221,10 @@ class Sensor:
         else:
             return {
                 "pressure": self.pressure, 
-                "temperature" : self.temperature, 
+                "temperature": self.temperature,
                 "mstemp": self.temperature,
                 "depth": self.depth,
-                "luminosity" : self.luminosity,
+                "luminosity": self.luminosity,
                 "gps": self.gps_coordinates,
                 "conductivity": self.conductivity,
                 "salinity": self.salinity,
@@ -342,6 +342,7 @@ class LuminositySensor(TSL2561):
             raise LuminositySensorCannotReadException(
                 "Could not read luminosity values"
             )
+
 
 if __name__ == "__main__":
     pass
