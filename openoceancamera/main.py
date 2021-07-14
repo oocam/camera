@@ -1,16 +1,7 @@
 import os
-import io
-import sys
 import threading
-import base64
-import json
-from time import sleep, time, gmtime, strftime
-from datetime import datetime, timedelta
-from picamera import PiCamera
 from logger import logger
 from camera import camera_thread
-from sensors import Sensor
-from Scheduler import Scheduler
 import uuid
 from appserver import start_api_server
 
