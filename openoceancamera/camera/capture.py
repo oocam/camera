@@ -26,6 +26,20 @@ def annotate_text_string(sensor_data):
         result += "Luminosity: " + str(sensor_data["luminosity"]) + " "
     if not sensor_data["gps"]["lat"] == -1 and not sensor_data["gps"]["lng"] == -1:
         result += "Lat: " + str(sensor_data["gps"]["lat"]) + "Lng: " + str(sensor_data["gps"]["lng"]) + " "
+    if not sensor_data["conductivity"] == -1:
+        result += "Conductivity: " + str(sensor_data["conductivity"]) + "μS/cm "
+    if not sensor_data["total_dissolved_solids"] == -1:
+        result += "TDS: " + str(sensor_data["total_dissolved_solids"]) + " "
+    if not sensor_data["salinity"] == -1:
+        result += "Salinity: " + str(sensor_data["salinity"]) + " "
+    if not sensor_data["specific_gravity"] == -1:
+        result += "SG: " + str(sensor_data["specific_gravity"]) + " "
+    if not sensor_data["dissolved_oxygen"] == -1:
+        result += "DO: " + str(sensor_data["dissolved_oxygen"]) + "mg/L "
+    if not sensor_data["percentage_oxygen"] == -1:
+        result += "PO: " + str(sensor_data["percentage_oxygen"]) + "% "
+    if not sensor_data["pH"] == -1:
+        result += "pH: " + str(sensor_data["pH"]) + " "
     return result
 
 

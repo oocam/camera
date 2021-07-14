@@ -164,16 +164,16 @@ class Sensor:
             "luminosity" : self.luminosity,
             "gps": self.gps_coordinates,
             "conductivity": self.conductivity,
-            "total dissolved solids": self.total_dissolved_solids,
+            "total_dissolved_solids": self.total_dissolved_solids,
             "salinity": self.salinity,
-            "specific gravity": self.specific_gravity,
-            "dissolved oxygen": self.dissolved_oxygen,
-            "percentage oxygen": self.percentage_oxygen,
+            "specific_gravity": self.specific_gravity,
+            "dissolved_oxygen": self.dissolved_oxygen,
+            "percentage_oxygen": self.percentage_oxygen,
             "pH": self.pH,
         }
 
     def write_sensor_data(self):
-        if os.path.exists(self.log_filename):
+        if os.path.exists(LOG_FILE):
             file_mode = "a"
         else:
             file_mode = "w"
@@ -196,7 +196,7 @@ class Sensor:
                 "pH": self.pH
             }
             sensor_data_json = json.dumps(sensor_data_object)
-            with open(self.log_filename, file_mode) as f:
+            with open(LOG_FILE, file_mode) as f:
                 f.write(sensor_data_json)
                 f.write("\n")
         except Exception as err:
@@ -243,8 +243,8 @@ class Sensor:
         try:
             self.read_sensor_data()
             sensor_data_object = {
-                "pressure": self.pressure, 
-                "temperature" : self.temperature, 
+                "pressure": self.pressure,
+                "temperature" : self.temperature,
                 "mstemp": self.temperature,
                 "depth": self.depth,
                 "luminosity" : self.luminosity,
