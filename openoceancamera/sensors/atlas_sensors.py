@@ -88,15 +88,6 @@ class EC_Sensor(AtlasI2C):
             row = row + f'{self._PARAMS[n]} unit: {self._UNITS[n]}, '
         return row
 
-    # NOTE: Not sure what response code will be returned in the 
-    # following method, as I have now disabled response codes in the
-    # read method in the AtlasI2C base class. Might just return none.
-    
-    # TODO: 1) Find what following function response would be.
-    
-    # TODO: 2) Change the return to True, instead of 'response', and ask
-    # UG where to put it exactly.
-
     def set_TDS_conv(self, conv_factor: float = 0.54) -> bool:
         """Set custom conversion factor for the TDS measurement.
 
@@ -124,10 +115,6 @@ class EC_Sensor(AtlasI2C):
         """Gets the currently set TDS conversion factor (str)."""
         return self.query('TDS,?')
 
-    # TODO: Again, not sure what to make this return. It really depends
-    # on what is desired to be returned. Can always just change this to 
-    # return True.
-
     def set_temp_compensation(self, temp: int = 25) -> str:
         """Sets the temperature and compensates for its effects in the measurements.
         
@@ -144,9 +131,6 @@ class EC_Sensor(AtlasI2C):
         else:
             print('Temp compensation factor should be a decimal/integer!')
         return response
-
-    # NOTE: Ask UG if the following function should return False if 
-    # error, or just always return True.
 
     def set_probe(self, probe: float = 1.0) -> bool:
         """Sets the type of Atlas EC probe that you have connected to the sensor.
@@ -168,24 +152,23 @@ class EC_Sensor(AtlasI2C):
 
     def get_conductivity(self) -> float:
         """Explicitly returns the electrical conductivity measurement."""
-        return float(self._get_data()[0])
+        data = self._get_data()[0].rstrip('\00')
+        return float(data)
     
     def get_tds(self) -> float:
         """Explicitly returns the total dissolved solids measurement."""
-        return float(self._get_data()[1])
+        data = self._get_data()[1].rstrip('\00')
+        return float()
     
     def get_salinity(self) -> float:
         """Explicitly returns the salinity measurement."""
-        return float(self._get_data()[2])
+        data = self._get_data()[2].rstrip('\00')
+        return float(data)
     
-    def get_specific_gravity(self) -> Union[float, str]:
+    def get_specific_gravity(self) -> float:
         """Explicitly returns the specific gravity measurement."""
-        try:
-            value: str = self._get_data()[3].rstrip('\x00')
-            return float(value)
-        except Exception as err:
-            print(f'Error: {err}')
-            return value
+        data = self._get_data()[3].rstrip('\00')
+        return float(data)
 
 
 class DO_Sensor(AtlasI2C):
@@ -230,16 +213,13 @@ class DO_Sensor(AtlasI2C):
 
     def get_do(self) -> float:
         """Explicitly returns the dissolved oxygen measurement."""
-        return float(self._get_data()[0])
+        data = self._get_data()[0].rstrip('\x00')
+        return float(data)
     
-    def get_percent_oxygen(self) -> Union[float, str]:
+    def get_percent_oxygen(self) -> float:
         """Explicitly returns the percentage oxygen measurement."""
-        value = self._get_data()[1]
-        try:
-            return float(value.rstrip('\x00'))     # Float.
-        except Exception as err:
-            print(f'FACK: {err}')
-            return value     # String.
+        data = self._get_data()[1].rstrip('\x00')
+        return float(data)
 
     def get_header_row(self) -> str:
         """Gets the measurement params and also shows units for each one.
@@ -350,8 +330,8 @@ class PH_Sensor(AtlasI2C):
 
     def get_ph(self) -> float:
         """Explicitly returns the pH measurement."""
-        pH_string = self._get_data()[0].rstrip('\x00')
-        return float(pH_string)
+        data = self._get_data()[0].rstrip('\x00')
+        return float(data)
 
     def get_header_row(self) -> str:
         """Gets the measurement param and also shows the unit for it.
@@ -396,37 +376,5 @@ class PH_Sensor(AtlasI2C):
         """
         return self.query('slope,?')
 
-
-# TODO: I don't think that this is needed!
-
-
-def get_all_sensor_data(device_list) -> str:
-    """Gets the readings from all connected sensors
-
-    Args:
-        device_list: List of sensor objects.
-
-    Returns:
-        Long CSV string of data combined from all sensors.
-    """
-    data = ''
-    for sensor in device_list:
-        readings: str = sensor._get_data()
-        data += f'{readings},'
-    return data
-
-
-def get_all_header_rows(device_list) -> str:
-    """Gets the header rows from all connected sensors; makes one combined header row.
-    
-    Args:
-        device_list: List of sensor objects.
-
-    Returns:
-        Long CSV string of headers combined from all sensors.
-    """
-    header_row = ''
-    for sensor in device_list:
-        headers = sensor.get_header_row()
-        header_row += f'{headers},'
-    return header_row
+if __name__ == '__main__':
+    pass
