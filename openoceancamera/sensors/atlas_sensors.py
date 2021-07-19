@@ -152,23 +152,47 @@ class EC_Sensor(AtlasI2C):
 
     def get_conductivity(self) -> float:
         """Explicitly returns the electrical conductivity measurement."""
-        data = self._get_data()[0].rstrip('\00')
-        return float(data)
+        datalist = self._get_data()
+        try:
+            data = datalist[0].rstrip('\00')
+            return float(data)
+        except Exception as err:
+            print(f'conduct read error: {err}')
+            print('data:',datalist)
+            return 69.69
     
     def get_tds(self) -> float:
         """Explicitly returns the total dissolved solids measurement."""
-        data = self._get_data()[1].rstrip('\00')
-        return float()
+        datalist = self._get_data()
+        try:
+            data = datalist[1].rstrip('\00')
+            return float()
+        except Exception as err:
+            print(f'tds read error: {err}')
+            print('data',datalist)
+            return 69.69
     
     def get_salinity(self) -> float:
         """Explicitly returns the salinity measurement."""
-        data = self._get_data()[2].rstrip('\00')
-        return float(data)
+        datalist = self._get_data()
+        try:
+            data = datalist[2].rstrip('\00')
+            return float(data)
+        except Exception as err:
+            print(f'sal read error: {err}')
+            print(datalist)
+            return 69.69
     
     def get_specific_gravity(self) -> float:
         """Explicitly returns the specific gravity measurement."""
-        data = self._get_data()[3].rstrip('\00')
-        return float(data)
+        datalist = self._get_data()
+        try:
+            data = datalist[3].rstrip('\00')
+            return float(data)
+        except Exception as err:
+            print(f'sg read error: {err}')
+            print(datalist)
+            return 69.69
 
 
 class DO_Sensor(AtlasI2C):
@@ -213,13 +237,25 @@ class DO_Sensor(AtlasI2C):
 
     def get_do(self) -> float:
         """Explicitly returns the dissolved oxygen measurement."""
-        data = self._get_data()[0].rstrip('\x00')
-        return float(data)
-    
+        datalist = self._get_data()
+        try:
+            data = datalist[0].rstrip('\x00')
+            return float(data)
+        except Exception as err:
+            print(f'sg read error: {err}')
+            print(datalist)
+            return 69.69
+        
     def get_percent_oxygen(self) -> float:
         """Explicitly returns the percentage oxygen measurement."""
-        data = self._get_data()[1].rstrip('\x00')
-        return float(data)
+        datalist = self._get_data()
+        try:
+            data = datalist[1].rstrip('\x00')
+            return float(data)
+        except Exception as err:
+            print(f'sg read error: {err}')
+            print(datalist)
+            return 69.69
 
     def get_header_row(self) -> str:
         """Gets the measurement params and also shows units for each one.
@@ -330,8 +366,15 @@ class PH_Sensor(AtlasI2C):
 
     def get_ph(self) -> float:
         """Explicitly returns the pH measurement."""
-        data = self._get_data()[0].rstrip('\x00')
-        return float(data)
+        datalist = self._get_data()
+        try:
+            data = datalist[0].rstrip('\x00')
+            return float(data)
+        except Exception as err:
+            print(f'ph read error: {err}')
+            print(datalist)
+            return 69.69
+
 
     def get_header_row(self) -> str:
         """Gets the measurement param and also shows the unit for it.
