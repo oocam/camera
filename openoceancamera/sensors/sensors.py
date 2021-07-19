@@ -215,7 +215,7 @@ class Sensor:
                 "sg": self.specific_gravity,
                 "td": self.total_dissolved_solids,
                 "do": self.dissolved_oxygen,
-                "%": self.percentage_oxygen,
+                "po": self.percentage_oxygen,
                 "pH": self.pH,
             }
         else:
@@ -231,7 +231,7 @@ class Sensor:
                 "specific_gravity": self.specific_gravity,
                 "total_dissolved_solids": self.total_dissolved_solids,
                 "dissolved_oxygen": self.dissolved_oxygen,
-                "percent_oxygen": self.percentage_oxygen,
+                "percentage_oxygen": self.percentage_oxygen,
                 "pH": self.pH,
             }
 
