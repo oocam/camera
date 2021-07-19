@@ -228,10 +228,10 @@ class Sensor:
                 "gps": self.gps_coordinates,
                 "conductivity": self.conductivity,
                 "salinity": self.salinity,
-                "specific gravity": self.specific_gravity,
-                "total dissolved solids": self.total_dissolved_solids,
-                "dissolved oxygen": self.dissolved_oxygen,
-                "percent oxygen": self.percentage_oxygen,
+                "specific_gravity": self.specific_gravity,
+                "total_dissolved_solids": self.total_dissolved_solids,
+                "dissolved_oxygen": self.dissolved_oxygen,
+                "percent_oxygen": self.percentage_oxygen,
                 "pH": self.pH,
             }
 
@@ -250,11 +250,11 @@ class Sensor:
                 "luminosity" : self.luminosity,
                 "gps": self.gps_coordinates,
                 "conductivity": self.conductivity,
-                "total dissolved solids": self.total_dissolved_solids,
+                "total_dissolved_solids": self.total_dissolved_solids,
                 "salinity": self.salinity,
-                "specific gravity": self.specific_gravity,
-                "dissolved oxygen": self.dissolved_oxygen,
-                "percentage oxygen": self.percentage_oxygen,
+                "specific_gravity": self.specific_gravity,
+                "dissolved_oxygen": self.dissolved_oxygen,
+                "percentage_oxygen": self.percentage_oxygen,
                 "pH": self.pH,
             }
             sensor_data_object["timestamp"] = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
