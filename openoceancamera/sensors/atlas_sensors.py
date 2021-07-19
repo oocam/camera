@@ -150,6 +150,9 @@ class EC_Sensor(AtlasI2C):
         """Shows the current probe type/model that is set."""
         return self.query('K,?')
 
+    # # FIXME: This is broken. This may be returning a list with just one item. To check for 
+    # this, I have added more print statements.
+    
     def get_conductivity(self) -> float:
         """Explicitly returns the electrical conductivity measurement."""
         datalist = self._get_data()
@@ -158,7 +161,7 @@ class EC_Sensor(AtlasI2C):
             return float(data)
         except Exception as err:
             print(f'conduct read error: {err}')
-            print('data:',datalist)
+            print(f'data: {datalist}\nlen: {len(datalist)}')
             return 69.69
     
     def get_tds(self) -> float:
@@ -169,7 +172,7 @@ class EC_Sensor(AtlasI2C):
             return float()
         except Exception as err:
             print(f'tds read error: {err}')
-            print('data',datalist)
+            print(f'data: {datalist}\nlen: {len(datalist)}')
             return 69.69
     
     def get_salinity(self) -> float:
@@ -180,7 +183,7 @@ class EC_Sensor(AtlasI2C):
             return float(data)
         except Exception as err:
             print(f'sal read error: {err}')
-            print(datalist)
+            print(f'data: {datalist}\nlen: {len(datalist)}')
             return 69.69
     
     def get_specific_gravity(self) -> float:
@@ -191,7 +194,7 @@ class EC_Sensor(AtlasI2C):
             return float(data)
         except Exception as err:
             print(f'sg read error: {err}')
-            print(datalist)
+            print(f'data: {datalist}\nlen: {len(datalist)}')
             return 69.69
 
 
@@ -231,9 +234,9 @@ class DO_Sensor(AtlasI2C):
 
         for param in self._PARAMS:    # Ensures that all measurement parameters are enabled.
             self._write(f'O,{param},1')
-
-        # self._dissolved_oxygen = 0
-        # self._percentage_oxygen = 0
+    
+    # FIXME: This is broken. This may be returning a list with just one item. To check for 
+    # this, I have added more print statements.
 
     def get_do(self) -> float:
         """Explicitly returns the dissolved oxygen measurement."""
@@ -242,8 +245,8 @@ class DO_Sensor(AtlasI2C):
             data = datalist[0].rstrip('\x00')
             return float(data)
         except Exception as err:
-            print(f'sg read error: {err}')
-            print(datalist)
+            print(f'do read error: {err}')
+            print(f'data: {datalist}\nlen: {len(datalist)}')
             return 69.69
         
     def get_percent_oxygen(self) -> float:
@@ -253,8 +256,8 @@ class DO_Sensor(AtlasI2C):
             data = datalist[1].rstrip('\x00')
             return float(data)
         except Exception as err:
-            print(f'sg read error: {err}')
-            print(datalist)
+            print(f'po read error: {err}')
+            print(f'data: {datalist}\nlen: {len(datalist)}')
             return 69.69
 
     def get_header_row(self) -> str:
