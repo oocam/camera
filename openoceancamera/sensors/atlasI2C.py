@@ -18,11 +18,6 @@ import time
 import copy
 from typing import List, Optional
 
-
-# TODO:
-# 2) Review the methods, make sure they're all needed, even if the use is just 
-# once in a while.
-
 class AtlasI2C(ABC):
     """An abstract, parent/super class for Atlas Sensors.
 
@@ -82,10 +77,7 @@ class AtlasI2C(ABC):
         self._set_i2c_address(self._address)    # Sets the I2C address.
         self.name = name
         self.module = moduletype
-
         print(self.initialise_sensor())
-        self._set_cal_data()
-        self._import_calibration()
 	
     @property
     def long_timeout(self):
@@ -252,7 +244,7 @@ class AtlasI2C(ABC):
                 self._cal_data.append((self.query('Export', 12)))
             return True
         except Exception as err:
-            print(f'Error: {err}')
+            print(f'Error (I suck): {err}')
             return False
         
     def _import_calibration(self) -> bool:
@@ -355,3 +347,6 @@ class AtlasI2C(ABC):
             return True
         except:
             return False
+
+if __name__ == '__main__':
+    pass
