@@ -29,6 +29,7 @@ Pinouts:
 from os import strerror
 from typing import List
 from .atlasI2C import AtlasI2C
+import time
 
 # TODO:
 # 2) see if get header row method needed at all.
@@ -71,9 +72,11 @@ class EC_Sensor(AtlasI2C):
         super().__init__(moduletype=moduletype, name=name, address=address, bus=bus)
 
         # TODO: remove the print statements when the code is fixed.
-        print('enabling all parameters')
+        print('ec enabling all parameters')
         for param in self._PARAMS:    # Ensures that all measurement params are enabled.
             print(self.query(f'O,{param},1'))
+            time.sleep(self._LONG_TIMEOUT)
+        print(self.query('O,?'))
         
     def get_header_row(self) -> str:
         """Gets the measurement params and also shows the units for each one.
@@ -253,6 +256,7 @@ class DO_Sensor(AtlasI2C):
         print('enabling all parameters for do')
         for param in self._PARAMS:    # Ensures that all measurement parameters are enabled.
             print(self.query(f'O,{param},1'))
+        print(self.query('O,?'))
     
     # FIXME: This is broken. This may be returning a list with just one item. To check for 
     # this, I have added more print statements.
