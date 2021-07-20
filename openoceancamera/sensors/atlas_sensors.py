@@ -256,6 +256,7 @@ class DO_Sensor(AtlasI2C):
         print('enabling all parameters for do')
         for param in self._PARAMS:    # Ensures that all measurement parameters are enabled.
             print(self.query(f'O,{param},1'))
+            time.sleep(self._LONG_TIMEOUT)
         print(self.query('O,?'))
     
     # FIXME: This is broken. This may be returning a list with just one item. To check for 
