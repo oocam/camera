@@ -35,6 +35,9 @@ import time
 # 2) see if get header row method needed at all.
 # 3) Ask UG about compensation methods and conversion methods etc... How to implement?
 
+# TODO: The _UNITS class attribute is not required in the code. Move it to the
+# docstrings of the classes instead.
+
 class EC_Sensor(AtlasI2C):
     """Final class to control the Atlas Scientific conductivity sensor (EZO-EC).
 
@@ -57,7 +60,7 @@ class EC_Sensor(AtlasI2C):
         print(ec_sensor.get_header_rows())    # Shows a header row to start the data file with.
         print(ec_sensor.get_data())   # Takes readings.
     """
-    _PARAMS = ['EC', 'TDS', 'SAL', 'SG']
+    _PARAMS = ['EC', 'TDS', 'S', 'SG']
     _UNITS = ['μS/cm', 'ppm', 'PSU(ppt)', 'N/A']
 
     def __init__(self, 
@@ -75,7 +78,7 @@ class EC_Sensor(AtlasI2C):
         print('ec enabling all parameters')
         for param in self._PARAMS:    # Ensures that all measurement params are enabled.
             print(self.query(f'O,{param},1'))
-            time.sleep(self._LONG_TIMEOUT)
+            time.sleep(2)
         print(self.query('O,?'))
         
     def get_header_row(self) -> str:
@@ -256,7 +259,7 @@ class DO_Sensor(AtlasI2C):
         print('enabling all parameters for do')
         for param in self._PARAMS:    # Ensures that all measurement parameters are enabled.
             print(self.query(f'O,{param},1'))
-            time.sleep(self._LONG_TIMEOUT)
+            time.sleep(2)
         print(self.query('O,?'))
     
     # FIXME: This is broken. This may be returning a list with just one item. To check for 
