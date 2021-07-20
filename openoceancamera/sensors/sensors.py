@@ -13,6 +13,14 @@ from .atlas_sensors import EC_Sensor, DO_Sensor, PH_Sensor
 
 from typing import Dict
 
+# TODO: Additional features need to be added for the new sensors. 20/07/2021
+# The new sensors need to compensate for things such as salinity, 
+# pressure, temp. Ideally this should be done continuously, but at a
+# bare minimum, at least once when initialising.
+
+# TODO: The sensors take longer than 1 second to read. 20/07/2021
+# This is problematic because the camera can take photos every second,
+# so the sensors should be able to keep up.
 
 class Sensor:
     def __init__(self):
