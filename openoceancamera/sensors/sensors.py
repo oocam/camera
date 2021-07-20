@@ -53,13 +53,13 @@ class Sensor:
         except Exception as err:
             logger.error(f"Conductivity sensor: {err}")
         try:
-            self.ph_sensor = PH_Sensor()
-        except Exception as err:
-            logger.error(f"pH sensor: {err}")
-        try:
             self.do_sensor = DO_Sensor()
         except Exception as err:
             logger.error(f"Dissolved oxygen sensor: {err}")
+        try:
+            self.ph_sensor = PH_Sensor()
+        except Exception as err:
+            logger.error(f"pH sensor: {err}")
 
     def read_sensor_data(self) -> Dict[str, str]:
         """Reads data from all connected sensors.
