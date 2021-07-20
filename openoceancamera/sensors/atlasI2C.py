@@ -278,7 +278,7 @@ class AtlasI2C(ABC):
         """
         raw_data = self.query('r')
         # TODO: remove this once the code is fixed:
-        print(f'raw data {raw_data}')
+        print(f'raw data: {raw_data}')
         try:
             data = raw_data.split(',')
             return data
