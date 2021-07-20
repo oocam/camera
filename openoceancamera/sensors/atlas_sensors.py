@@ -27,7 +27,7 @@ Pinouts:
     OFF - Trim and leave unconnected. 
 """
 from os import strerror
-from typing import List, Union
+from typing import List
 from .atlasI2C import AtlasI2C
 
 # TODO:
@@ -155,7 +155,7 @@ class EC_Sensor(AtlasI2C):
     
     def get_conductivity(self) -> float:
         """Explicitly returns the electrical conductivity measurement."""
-        datalist = self._get_data()
+        datalist = self.get_data()
         try:
             data = datalist[0].rstrip('\00')
             return float(data)
@@ -166,7 +166,7 @@ class EC_Sensor(AtlasI2C):
     
     def get_tds(self) -> float:
         """Explicitly returns the total dissolved solids measurement."""
-        datalist = self._get_data()
+        datalist = self.get_data()
         try:
             data = datalist[1].rstrip('\00')
             return float()
@@ -177,7 +177,7 @@ class EC_Sensor(AtlasI2C):
     
     def get_salinity(self) -> float:
         """Explicitly returns the salinity measurement."""
-        datalist = self._get_data()
+        datalist = self.get_data()
         try:
             data = datalist[2].rstrip('\00')
             return float(data)
@@ -188,7 +188,7 @@ class EC_Sensor(AtlasI2C):
     
     def get_specific_gravity(self) -> float:
         """Explicitly returns the specific gravity measurement."""
-        datalist = self._get_data()
+        datalist = self.get_data()
         try:
             data = datalist[3].rstrip('\00')
             return float(data)
@@ -240,7 +240,7 @@ class DO_Sensor(AtlasI2C):
 
     def get_do(self) -> float:
         """Explicitly returns the dissolved oxygen measurement."""
-        datalist = self._get_data()
+        datalist = self.get_data()
         try:
             data = datalist[0].rstrip('\x00')
             return float(data)
@@ -251,7 +251,7 @@ class DO_Sensor(AtlasI2C):
         
     def get_percent_oxygen(self) -> float:
         """Explicitly returns the percentage oxygen measurement."""
-        datalist = self._get_data()
+        datalist = self.get_data()
         try:
             data = datalist[1].rstrip('\x00')
             return float(data)
@@ -369,7 +369,7 @@ class PH_Sensor(AtlasI2C):
 
     def get_ph(self) -> float:
         """Explicitly returns the pH measurement."""
-        datalist = self._get_data()
+        datalist = self.get_data()
         try:
             data = datalist[0].rstrip('\x00')
             return float(data)
