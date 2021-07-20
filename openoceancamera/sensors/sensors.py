@@ -111,6 +111,13 @@ class Sensor:
             except Exception as err:
                 logger.error(f"Pressure sensor: {err}")
 
+        # TODO: Repeated _get_data method calls
+        # Each of these 'get' methods, is calling _get_data again and again
+        # behind the scenes. This is repetitive, and may even be causing errors.
+        # This should be changed so that it calls _get_data once, gets a list of 
+        # parameters, and then simply parses that list, to get the values for each
+        # component.
+        
         if hasattr(self, 'ec_sensor'):
             try:
                 self.conductivity = self.ec_sensor.get_conductivity()
