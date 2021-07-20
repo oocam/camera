@@ -70,8 +70,10 @@ class EC_Sensor(AtlasI2C):
         """
         super().__init__(moduletype=moduletype, name=name, address=address, bus=bus)
 
+        # TODO: remove the print statements when the code is fixed.
+        print('enabling all parameters')
         for param in self._PARAMS:    # Ensures that all measurement params are enabled.
-            self._write(f'O,{param},1')
+            print(self.query(f'O,{param},1'))
         
     def get_header_row(self) -> str:
         """Gets the measurement params and also shows the units for each one.
@@ -156,45 +158,61 @@ class EC_Sensor(AtlasI2C):
     def get_conductivity(self) -> float:
         """Explicitly returns the electrical conductivity measurement."""
         datalist = self.get_data()
+        data = datalist[0]
         try:
-            data = datalist[0].rstrip('\00')
-            return float(data)
+            if data.endswith('\x00'):
+                data = data.rstrip('\x00')
+                return float(data)
+            else:
+                return float(data)
         except Exception as err:
             print(f'conduct read error: {err}')
-            print(f'data: {datalist}\nlen: {len(datalist)}')
+            print(f'cond data: {datalist}')
             return 69.69
     
     def get_tds(self) -> float:
         """Explicitly returns the total dissolved solids measurement."""
         datalist = self.get_data()
+        data = datalist[1]
         try:
-            data = datalist[1].rstrip('\00')
-            return float()
+            if data.endswith('\x00'):
+                data = data.rstrip('\x00')
+                return float(data)
+            else:
+                return float(data)
         except Exception as err:
             print(f'tds read error: {err}')
-            print(f'data: {datalist}\nlen: {len(datalist)}')
+            print(f'tds data: {datalist}')
             return 69.69
     
     def get_salinity(self) -> float:
         """Explicitly returns the salinity measurement."""
         datalist = self.get_data()
+        data = datalist[2]
         try:
-            data = datalist[2].rstrip('\00')
-            return float(data)
+            if data.endswith('\x00'):
+                data = data.rstrip('\x00')
+                return float(data)
+            else:
+                return float(data)
         except Exception as err:
             print(f'sal read error: {err}')
-            print(f'data: {datalist}\nlen: {len(datalist)}')
+            print(f'sal data: {datalist}')
             return 69.69
     
     def get_specific_gravity(self) -> float:
         """Explicitly returns the specific gravity measurement."""
         datalist = self.get_data()
+        data = datalist[3]
         try:
-            data = datalist[3].rstrip('\00')
-            return float(data)
+            if data.endswith('\x00'):
+                data = data.rstrip('\x00')
+                return float(data)
+            else:
+                return float(data)
         except Exception as err:
             print(f'sg read error: {err}')
-            print(f'data: {datalist}\nlen: {len(datalist)}')
+            print(f'sg data: {datalist}')
             return 69.69
 
 
@@ -232,8 +250,9 @@ class DO_Sensor(AtlasI2C):
         """
         super().__init__(address=address, moduletype=moduletype, name=name, bus=bus)
 
+        print('enabling all parameters for do')
         for param in self._PARAMS:    # Ensures that all measurement parameters are enabled.
-            self._write(f'O,{param},1')
+            print(self.query(f'O,{param},1'))
     
     # FIXME: This is broken. This may be returning a list with just one item. To check for 
     # this, I have added more print statements.
@@ -241,23 +260,31 @@ class DO_Sensor(AtlasI2C):
     def get_do(self) -> float:
         """Explicitly returns the dissolved oxygen measurement."""
         datalist = self.get_data()
+        data = datalist[0]
         try:
-            data = datalist[0].rstrip('\x00')
-            return float(data)
+            if data.endswith('\x00'):
+                data = data.rstrip('\x00')
+                return float(data)
+            else:
+                return float(data)
         except Exception as err:
             print(f'do read error: {err}')
-            print(f'data: {datalist}\nlen: {len(datalist)}')
+            print(f'do data: {datalist}')
             return 69.69
         
     def get_percent_oxygen(self) -> float:
         """Explicitly returns the percentage oxygen measurement."""
         datalist = self.get_data()
+        data = datalist[1]
         try:
-            data = datalist[1].rstrip('\x00')
-            return float(data)
+            if data.endswith('\x00'):
+                data = data.rstrip('\x00')
+                return float(data)
+            else:
+                return float(data)
         except Exception as err:
             print(f'po read error: {err}')
-            print(f'data: {datalist}\nlen: {len(datalist)}')
+            print(f'po data: {datalist}')
             return 69.69
 
     def get_header_row(self) -> str:
@@ -375,9 +402,8 @@ class PH_Sensor(AtlasI2C):
             return float(data)
         except Exception as err:
             print(f'ph read error: {err}')
-            print(datalist)
+            print(f'ph data: {datalist}')
             return 69.69
-
 
     def get_header_row(self) -> str:
         """Gets the measurement param and also shows the unit for it.
