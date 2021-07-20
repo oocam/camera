@@ -11,11 +11,17 @@ from restart import reboot_camera
 from .utils import get_camera_name
 from wiper import run_wiper
 
+# TODO: Add docstring for these functions. 20/07/2021
+# It'd probably be quite handy the next time an intern or new dev
+# worked on the code.
+# ALSO add docstring for this script, and the package 'camera'.
 
+# TODO: Change all these string concatenations to f strings. 20/07/2021
 def annotate_text_string(sensor_data):
+    print(f'annotation, raw sensor data: {sensor_data}')
     result = ""
     if not sensor_data["camera_name"] == "":
-        result += "Camera: " + sensor_data["camera_name"] + " "
+        result += f"Camera: {sensor_data['camera_name']} "
     if not sensor_data["pressure"] == -1:
         result += "Pressure: " + str(sensor_data["pressure"]) + " "
     if not sensor_data["temperature"] == -1:
@@ -40,6 +46,7 @@ def annotate_text_string(sensor_data):
         result += "PO: " + str(sensor_data["percentage_oxygen"]) + "% "
     if not sensor_data["pH"] == -1:
         result += "pH: " + str(sensor_data["pH"]) + " "
+    print(f'annotation, result: {result}')     # TODO: Remove this when the error is found.
     return result
 
 
@@ -86,6 +93,7 @@ def capture_video(slot):
         PWM.switch_off() 
         logger.error(err)
         reboot_camera()
+
 
 def capture_images(slot):
     try:
@@ -136,6 +144,7 @@ def capture_images(slot):
     except Exception as err: 
         PWM.switch_off()
         logger.error(err)
+
 
 def start_capture(slot):
     logger.debug("Going to capture")
