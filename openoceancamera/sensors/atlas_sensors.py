@@ -73,7 +73,6 @@ class EC_Sensor(AtlasI2C):
         for param in self._PARAMS:    # Ensures that all measurement params are enabled.
             self.query(f'O,{param},1')
             time.sleep(2)     # TODO: Test this with no delay, if it works remove line. 21/07/2021
-        print(self.query('O,?'))
         
     def get_header_row(self) -> str:
         """Gets the measurement params and also shows the units for each one.
