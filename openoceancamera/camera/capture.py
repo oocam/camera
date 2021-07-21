@@ -1,3 +1,4 @@
+from typing import Any
 from picamera import PiCamera 
 from datetime import datetime
 from time import sleep 
@@ -10,6 +11,7 @@ from subsealight import PWM
 from restart import reboot_camera
 from .utils import get_camera_name
 from wiper import run_wiper
+from typing import Dict
 
 # TODO: Add docstring for these functions. 20/07/2021
 # It'd probably be quite handy the next time an intern or new dev
@@ -17,7 +19,7 @@ from wiper import run_wiper
 # ALSO add docstring for this script, and the package 'camera'.
 
 # TODO: Change all these string concatenations to f strings. 20/07/2021
-def annotate_text_string(sensor_data):
+def annotate_text_string(sensor_data: str) -> str:
     """Generates a string of all data to be written to logs and photo
 
     Args:
@@ -56,7 +58,7 @@ def annotate_text_string(sensor_data):
     return result
 
 
-def capture_video(slot):
+def capture_video(slot: Dict[str, Any]) -> None:
     resolution = slot["resolution"]
     framerate = slot["framerate"]
     iso = slot["iso"]
@@ -98,7 +100,7 @@ def capture_video(slot):
         reboot_camera()
 
 
-def capture_images(slot):
+def capture_images(slot: Dict[str, Any]) -> None:
     try:
         logger.debug("Going to set camera config")
         resolution = slot["resolution"]
@@ -149,7 +151,7 @@ def capture_images(slot):
         logger.error(err)
 
 
-def start_capture(slot):
+def start_capture(slot: Dict[str, Any]) -> None:
     logger.debug("Going to capture")
     if slot["video"]:
         capture_video(slot)
