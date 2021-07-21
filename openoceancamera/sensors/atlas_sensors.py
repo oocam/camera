@@ -31,10 +31,6 @@ from typing import List
 from .atlasI2C import AtlasI2C
 import time
 
-# TODO:
-# 2) see if get header row method needed at all.
-# 3) Ask UG about compensation methods and conversion methods etc... How to implement?
-
 # TODO: The _UNITS class attribute is not required in the code. Move it to the
 # docstrings of the classes instead.
 
@@ -74,11 +70,9 @@ class EC_Sensor(AtlasI2C):
         """
         super().__init__(moduletype=moduletype, name=name, address=address, bus=bus)
 
-        # TODO: remove the print statements when the code is fixed.
-        print('ec enabling all parameters')
         for param in self._PARAMS:    # Ensures that all measurement params are enabled.
-            print(self.query(f'O,{param},1'))
-            time.sleep(2)
+            self.query(f'O,{param},1')
+            time.sleep(2)     # TODO: Test this with no delay, if it works remove line. 21/07/2021
         print(self.query('O,?'))
         
     def get_header_row(self) -> str:
