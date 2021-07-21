@@ -398,7 +398,3 @@ class PH_Sensor(AtlasI2C):
             The last term is how many millivolts the zero point is off from true 0.
         """
         return self.query('slope,?')
-
-
-if __name__ == '__main__':
-    pass
