@@ -18,7 +18,6 @@ from wiper import run_wiper
 
 # TODO: Change all these string concatenations to f strings. 20/07/2021
 def annotate_text_string(sensor_data):
-    print(f'annotation, raw sensor data: {sensor_data}')
     result = ""
     if not sensor_data["camera_name"] == "":
         result += f"Camera: {sensor_data['camera_name']} "
@@ -46,7 +45,6 @@ def annotate_text_string(sensor_data):
         result += "PO: " + str(sensor_data["percentage_oxygen"]) + "% "
     if not sensor_data["pH"] == -1:
         result += "pH: " + str(sensor_data["pH"]) + " "
-    print(f'annotation, result: {result}')     # TODO: Remove this when the error is found.
     return result
 
 
