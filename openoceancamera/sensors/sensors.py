@@ -250,12 +250,12 @@ class Sensor:
 # TODO: Add these kinds of classes for the 3 new sensors as well.
 
 class PressureSensorNotConnectedException(Exception):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
 
 class PressureSensorCannotReadException(Exception):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
 
@@ -266,12 +266,12 @@ class PressureSensor(MS5837):
 
 
 class TemperatureSensorNotConnectedException(Exception):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
 
 class TemperatureSensorCannotReadException(Exception):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
 
@@ -296,12 +296,12 @@ class TemperatureSensor(TSYS01_30BA):
 
 
 class LuminositySensorNotConnectedException(Exception):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
 
 class LuminositySensorCannotReadException(Exception):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
 
@@ -324,6 +324,36 @@ class LuminositySensor(TSL2561):
             raise LuminositySensorCannotReadException(
                 "Could not read luminosity values"
             )
+
+
+class ECSensorNotConnectedException(Exception):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ECSensorCannotReadException(Exception):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DOSensorNotConnectedException(Exception):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DOSensorCannotReadException(Exception):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PHSensorNotConnectedException(Exception):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PHSensorCannotReadException(Exception):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
 
 
 if __name__ == "__main__":
