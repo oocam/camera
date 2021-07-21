@@ -31,14 +31,18 @@ from typing import List
 from .atlasI2C import AtlasI2C
 import time
 
-# TODO: The _UNITS class attribute is not required in the code. Move it to the
-# docstrings of the classes instead.
 
 class EC_Sensor(AtlasI2C):
     """Final class to control the Atlas Scientific conductivity sensor (EZO-EC).
 
     This class should be instantiated.
     Official datasheet for this sensor: https://atlas-scientific.com/files/EC_EZO_Datasheet.pdf
+
+    This sensor can measure 4 parameters:
+    - Electrical conducitivity (Unit: μS/cm) 'PSU(ppt)', 'N/A']
+    - Total dissolved solids (Unit: ppm)
+    - Salinity (Unit: PSU(ppt))
+    - Specific gravity (No unit)
 
     Public Methods:
         get_header_rows: Shows the measurement params and the units for them.
@@ -57,7 +61,6 @@ class EC_Sensor(AtlasI2C):
         print(ec_sensor.get_data())   # Takes readings.
     """
     _PARAMS = ['EC', 'TDS', 'S', 'SG']
-    _UNITS = ['μS/cm', 'ppm', 'PSU(ppt)', 'N/A']
 
     def __init__(self, 
                  address: int = 100, 
@@ -227,7 +230,10 @@ class DO_Sensor(AtlasI2C):
         set_press_compensation: Sets the pressure in order to compensate for it.
         set_sal_compensation: Sets the salinity in order to compensate for it.
         set_params: Enables/disables measurement parameters.
-    
+
+    This sensor can measure 2 parameters:
+    - Dissolved oxygen (Unit: mg/L)
+    - Percentage oxygen (Unit: % saturation)
     Example Use:
         do_sensor = DO_Sensor()    # Sets up the class for the sensor, it automatically gets initialised.
         do_sensor.initialise_sensor()    # To re initialise it if you want.
@@ -236,7 +242,6 @@ class DO_Sensor(AtlasI2C):
         print(do_sensor.get_data())   # Takes readings.
     """
     _PARAMS = ['DO', '%']
-    _UNITS = ['mg/L', '% sat.']
     
     def __init__(self, 
                  address: int = 97, 
@@ -371,6 +376,9 @@ class PH_Sensor(AtlasI2C):
     This class should be instantiated.
     Official datasheet for this sensor: https://atlas-scientific.com/files/pH_EZO_Datasheet.pdf
 
+    This sensor can measure one parameter: 
+    - pH (Unit: pH)
+    
     Public Methods:
         get_header_rows: Shows the measurement params and the units for them.
         set_temp_compensation: Sets the temperature in order to compensate for it.
