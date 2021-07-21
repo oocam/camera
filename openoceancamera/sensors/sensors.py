@@ -13,6 +13,14 @@ from .atlas_sensors import EC_Sensor, DO_Sensor, PH_Sensor
 
 from typing import Dict
 
+# TODO: Additional features need to be added for the new sensors. 20/07/2021
+# The new sensors need to compensate for things such as salinity, 
+# pressure, temp. Ideally this should be done continuously, but at a
+# bare minimum, at least once when initialising.
+
+# TODO: The sensors take longer than 1 second to read. 20/07/2021
+# This is problematic because the camera can take photos every second,
+# so the sensors should be able to keep up.
 
 class Sensor:
     def __init__(self):
@@ -117,7 +125,7 @@ class Sensor:
         # This should be changed so that it calls _get_data once, gets a list of 
         # parameters, and then simply parses that list, to get the values for each
         # component.
-        
+
         if hasattr(self, 'ec_sensor'):
             try:
                 self.conductivity = self.ec_sensor.get_conductivity()
@@ -195,11 +203,11 @@ class Sensor:
                 "pressure": self.pressure,
                 "gps": self.gps_coordinates,
                 "conductivity": self.conductivity,
-                "tds": self.total_dissolved_solids,
+                "total_dissolved_solids": self.total_dissolved_solids,
                 "salinity": self.salinity,
-                "SG": self.specific_gravity,
-                "dissolved oxygen": self.dissolved_oxygen,
-                "% oxygen": self.percentage_oxygen,
+                "specific_gravity": self.specific_gravity,
+                "dissolved_oxygen": self.dissolved_oxygen,
+                "percentage_oxygen": self.percentage_oxygen,
                 "pH": self.pH
             }
             sensor_data_json = json.dumps(sensor_data_object)
@@ -242,6 +250,9 @@ class Sensor:
                 "pH": self.pH,
             }
 
+    # FIXME: This is a duplicate method and should be removed.
+    # Either the above one or this one should be updated and kept.
+
     def write_sensor_data(self, sensor_data_object=None) -> None:
         if os.path.exists(LOG_FILE):
             file_mode = "a"
@@ -273,6 +284,7 @@ class Sensor:
             logger.error(err)
             return None
 
+# TODO: Add these kinds of classes for the 3 new sensors as well.
 
 class PressureSensorNotConnectedException(Exception):
     def __init__(self, *args, **kwargs):
@@ -308,6 +320,7 @@ class TemperatureSensor(TSYS01_30BA):
             raise TemperatureSensorNotConnectedException(
                 "TSYS01_30BA may not be connected"
             )
+
 
     def temperature(self, conversion=UNITS_Centigrade):
         if self.read():
