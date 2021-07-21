@@ -247,7 +247,6 @@ class Sensor:
             logger.error(err)
             return None
 
-# TODO: Add these kinds of classes for the 3 new sensors as well.
 
 class PressureSensorNotConnectedException(Exception):
     def __init__(self, *args, **kwargs) -> None:
