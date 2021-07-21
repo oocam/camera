@@ -18,10 +18,6 @@ from typing import Dict
 # pressure, temp. Ideally this should be done continuously, but at a
 # bare minimum, at least once when initialising.
 
-# TODO: The sensors take longer than 1 second to read. 20/07/2021
-# This is problematic because the camera can take photos every second,
-# so the sensors should be able to keep up.
-
 class Sensor:
     def __init__(self):
         self.luminosity = -1
@@ -287,7 +283,6 @@ class TemperatureSensor(TSYS01_30BA):
             raise TemperatureSensorNotConnectedException(
                 "TSYS01_30BA may not be connected"
             )
-
 
     def temperature(self, conversion=UNITS_Centigrade):
         if self.read():
