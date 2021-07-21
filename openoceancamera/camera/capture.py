@@ -11,7 +11,7 @@ from subsealight import PWM
 from restart import reboot_camera
 from .utils import get_camera_name
 from wiper import run_wiper
-from typing import Dict
+from typing import Dict, Any
 
 # TODO: Add docstrings for these functions. 20/07/2021
 # It'd probably be quite handy the next time an intern or new dev
