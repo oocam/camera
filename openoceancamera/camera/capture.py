@@ -18,6 +18,14 @@ from wiper import run_wiper
 
 # TODO: Change all these string concatenations to f strings. 20/07/2021
 def annotate_text_string(sensor_data):
+    """Generates a string of all data to be written to logs and photo
+
+    Args:
+        sensor_data (str): Raw sensor data from the Sensors.get_sensor_data().
+
+    Returns:
+        str: A string of data which will be annotated to the photo.
+    """
     result = ""
     if not sensor_data["camera_name"] == "":
         result += f"Camera: {sensor_data['camera_name']} "
@@ -75,7 +83,7 @@ def capture_video(slot):
             PWM.switch_on(light)
             camera.start_recording(filename, format="h264")
             current_time = datetime.now() 
-
+            # TODO: Look at sensor_data var
             sensors = Sensor()
             sensors.write_sensor_data() 
             sensor_data = sensors.get_sensor_data(short=True)
