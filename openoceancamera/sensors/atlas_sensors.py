@@ -235,9 +235,6 @@ class DO_Sensor(AtlasI2C):
         for param in self._PARAMS:    # Ensures that all measurement parameters are enabled.
             self.query(f'O,{param},1')
             time.sleep(2)
-    
-    # FIXME: This is broken. This may be returning a list with just one item. To check for 
-    # this, I have added more print statements.
 
     def get_do(self) -> float:
         """Explicitly returns the dissolved oxygen measurement."""
@@ -267,8 +264,6 @@ class DO_Sensor(AtlasI2C):
             print(f'po read error: {err}')
             return -1
     
-    # NOTE: Same response issue as above.
-
     def set_temp_compensation(self, temp: int = 20) -> str:
         """Sets the temperature and compensates for its effects in the measurements.
 
@@ -403,6 +398,7 @@ class PH_Sensor(AtlasI2C):
             The last term is how many millivolts the zero point is off from true 0.
         """
         return self.query('slope,?')
+
 
 if __name__ == '__main__':
     pass
