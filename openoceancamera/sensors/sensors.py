@@ -187,36 +187,6 @@ class Sensor:
             "pH": self.pH,
         }
 
-    def write_sensor_data(self):
-        if os.path.exists(LOG_FILE):
-            file_mode = "a"
-        else:
-            file_mode = "w"
-        try:
-            self.read_sensor_data()
-            sensor_data_object = {
-                "timestamp": datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),
-                "luminosity": self.luminosity,
-                "temp": self.temperature,
-                "mstemp": self.temperature,
-                "depth": self.depth,
-                "pressure": self.pressure,
-                "gps": self.gps_coordinates,
-                "conductivity": self.conductivity,
-                "total_dissolved_solids": self.total_dissolved_solids,
-                "salinity": self.salinity,
-                "specific_gravity": self.specific_gravity,
-                "dissolved_oxygen": self.dissolved_oxygen,
-                "percentage_oxygen": self.percentage_oxygen,
-                "pH": self.pH
-            }
-            sensor_data_json = json.dumps(sensor_data_object)
-            with open(LOG_FILE, file_mode) as f:
-                f.write(sensor_data_json)
-                f.write("\n")
-        except Exception as err:
-            logger.error(err)
-
     def get_sensor_data(self, short=False) -> Dict[str, str]:
         if short:
             return {
@@ -249,9 +219,6 @@ class Sensor:
                 "percentage_oxygen": self.percentage_oxygen,
                 "pH": self.pH,
             }
-
-    # FIXME: This is a duplicate method and should be removed.
-    # Either the above one or this one should be updated and kept.
 
     def write_sensor_data(self, sensor_data_object=None) -> None:
         if os.path.exists(LOG_FILE):
