@@ -83,14 +83,11 @@ def capture_video(slot):
             PWM.switch_on(light)
             camera.start_recording(filename, format="h264")
             current_time = datetime.now() 
-            # TODO: Look at sensor_data var
             sensors = Sensor()
             sensors.write_sensor_data() 
-            sensor_data = sensors.get_sensor_data(short=True)
             while current_time < slot["stop"]: 
                 camera.annotate_text = f"{current_time.strftime('%Y-%m-%d %H:%M:%S')} @ {slot['framerate']} fps"
                 sensors.write_sensor_data() 
-                sensor_data = sensors.get_sensor_data(short=True)
                 sleep(1)
                 current_time = datetime.now() 
             camera.stop_recording() 
