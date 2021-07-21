@@ -325,7 +325,7 @@ class LuminositySensor(TSL2561):
                 "Could not read luminosity values"
             )
 
-
+# TODO : review these classes
 class ECSensorNotConnectedException(Exception):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
