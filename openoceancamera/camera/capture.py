@@ -13,7 +13,7 @@ from .utils import get_camera_name
 from wiper import run_wiper
 from typing import Dict
 
-# TODO: Add docstring for these functions. 20/07/2021
+# TODO: Add docstrings for these functions. 20/07/2021
 # It'd probably be quite handy the next time an intern or new dev
 # worked on the code.
 # ALSO add docstring for this script, and the package 'camera'.
