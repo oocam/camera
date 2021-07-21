@@ -138,69 +138,62 @@ class EC_Sensor(AtlasI2C):
     def get_probe(self) -> str:
         """Shows the current probe type/model that is set."""
         return self.query('K,?')
-
-    # # FIXME: This is broken. This may be returning a list with just one item. To check for 
-    # this, I have added more print statements.
     
     def get_conductivity(self) -> float:
         """Explicitly returns the electrical conductivity measurement."""
-        datalist = self.get_data()
-        data = datalist[0]
         try:
+            datalist = self.get_data()
+            data = datalist[0]
             if data.endswith('\x00'):
                 data = data.rstrip('\x00')
                 return float(data)
             else:
                 return float(data)
         except Exception as err:
-            print(f'conduct read error: {err}')
-            print(f'cond data: {datalist}')
-            return 69.69
+            print(f'get_conductivity error: {err}')
+            return -1
     
     def get_tds(self) -> float:
         """Explicitly returns the total dissolved solids measurement."""
-        datalist = self.get_data()
-        data = datalist[1]
         try:
+            datalist = self.get_data()
+            data = datalist[1]
             if data.endswith('\x00'):
                 data = data.rstrip('\x00')
                 return float(data)
             else:
                 return float(data)
         except Exception as err:
-            print(f'tds read error: {err}')
-            print(f'tds data: {datalist}')
-            return 69.69
+            print(f'get_tds error: {err}')
+            return -1
     
     def get_salinity(self) -> float:
         """Explicitly returns the salinity measurement."""
-        datalist = self.get_data()
-        data = datalist[2]
         try:
+            datalist = self.get_data()
+            data = datalist[2]
             if data.endswith('\x00'):
                 data = data.rstrip('\x00')
                 return float(data)
             else:
                 return float(data)
         except Exception as err:
-            print(f'sal read error: {err}')
-            print(f'sal data: {datalist}')
-            return 69.69
+            print(f'get_salinity error: {err}')
+            return -1
     
     def get_specific_gravity(self) -> float:
         """Explicitly returns the specific gravity measurement."""
-        datalist = self.get_data()
-        data = datalist[3]
         try:
+            datalist = self.get_data()
+            data = datalist[3]
             if data.endswith('\x00'):
                 data = data.rstrip('\x00')
                 return float(data)
             else:
                 return float(data)
         except Exception as err:
-            print(f'sg read error: {err}')
-            print(f'sg data: {datalist}')
-            return 69.69
+            print(f'get_specific_gravity error: {err}')
+            return -1
 
 
 class DO_Sensor(AtlasI2C):
@@ -243,31 +236,30 @@ class DO_Sensor(AtlasI2C):
         for param in self._PARAMS:    # Ensures that all measurement parameters are enabled.
             print(self.query(f'O,{param},1'))
             time.sleep(2)
-        print(self.query('O,?'))
+        print(self.query('O,?'))    # TODO REMOVE THIS!
     
     # FIXME: This is broken. This may be returning a list with just one item. To check for 
     # this, I have added more print statements.
 
     def get_do(self) -> float:
         """Explicitly returns the dissolved oxygen measurement."""
-        datalist = self.get_data()
-        data = datalist[0]
         try:
+            datalist = self.get_data()
+            data = datalist[0]
             if data.endswith('\x00'):
                 data = data.rstrip('\x00')
                 return float(data)
             else:
                 return float(data)
         except Exception as err:
-            print(f'do read error: {err}')
-            print(f'do data: {datalist}')
-            return 69.69
+            print(f'get_do error: {err}')
+            return -1
         
     def get_percent_oxygen(self) -> float:
         """Explicitly returns the percentage oxygen measurement."""
-        datalist = self.get_data()
-        data = datalist[1]
         try:
+            datalist = self.get_data()
+            data = datalist[1]
             if data.endswith('\x00'):
                 data = data.rstrip('\x00')
                 return float(data)
@@ -275,8 +267,7 @@ class DO_Sensor(AtlasI2C):
                 return float(data)
         except Exception as err:
             print(f'po read error: {err}')
-            print(f'po data: {datalist}')
-            return 69.69
+            return -1
     
     # NOTE: Same response issue as above.
 
@@ -375,14 +366,13 @@ class PH_Sensor(AtlasI2C):
 
     def get_ph(self) -> float:
         """Explicitly returns the pH measurement."""
-        datalist = self.get_data()
         try:
+            datalist = self.get_data()
             data = datalist[0].rstrip('\x00')
             return float(data)
         except Exception as err:
-            print(f'ph read error: {err}')
-            print(f'ph data: {datalist}')
-            return 69.69
+            print(f'get_ph error: {err}')
+            return -1
     
     def set_temp_compensation(self, temp: int = 25) -> str:
         """Compensates for the effects of ambient temperature in the measurements.
