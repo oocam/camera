@@ -76,21 +76,6 @@ class EC_Sensor(AtlasI2C):
         for param in self._PARAMS:    # Ensures that all measurement params are enabled.
             self.query(f'O,{param},1')
             time.sleep(2)     # TODO: Test this with no delay, if it works remove line. 21/07/2021
-        
-    def get_header_row(self) -> str:
-        """Gets the measurement params and also shows the units for each one.
-
-        To be called before taking readings, as it provides a header/label row 
-        for the CSV file of data.
-
-        RETURNS: 
-            Header row CSV string for the data file.
-            Example: 'EC unit: μS/cm, TDS unit: ppm'
-        """
-        row = ''
-        for n in range(len(self._UNITS)):
-            row = row + f'{self._PARAMS[n]} unit: {self._UNITS[n]}, '
-        return row
 
     def set_TDS_conv(self, conv_factor: float = 0.54) -> bool:
         """Set custom conversion factor for the TDS measurement.
@@ -292,21 +277,6 @@ class DO_Sensor(AtlasI2C):
             print(f'po read error: {err}')
             print(f'po data: {datalist}')
             return 69.69
-
-    def get_header_row(self) -> str:
-        """Gets the measurement params and also shows units for each one.
-
-        To be called before taking readings, as it provides a header/label row 
-        for the CSV file of data.
-
-        RETURNS: 
-            Header row CSV string for the data file.
-            Example: 'DO unit: mg/L, % unit: % sat.'
-        """
-        row = ''
-        for n in range(len(self._UNITS)):
-            row = row + f'{self._PARAMS[n]} unit: {self._UNITS[n]}, '
-        return row
     
     # NOTE: Same response issue as above.
 
@@ -378,7 +348,7 @@ class PH_Sensor(AtlasI2C):
 
     This sensor can measure one parameter: 
     - pH (Unit: pH)
-    
+
     Public Methods:
         get_header_rows: Shows the measurement params and the units for them.
         set_temp_compensation: Sets the temperature in order to compensate for it.
@@ -413,17 +383,6 @@ class PH_Sensor(AtlasI2C):
             print(f'ph read error: {err}')
             print(f'ph data: {datalist}')
             return 69.69
-
-    def get_header_row(self) -> str:
-        """Gets the measurement param and also shows the unit for it.
-
-        To be called before taking readings, as it provides a header/label row 
-        for the CSV file of data.
-
-        RETURNS: 
-            'pH unit: pH'
-        """
-        return 'pH unit: pH'
     
     def set_temp_compensation(self, temp: int = 25) -> str:
         """Compensates for the effects of ambient temperature in the measurements.
