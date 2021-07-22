@@ -1,5 +1,4 @@
 import smbus2 as smbus
-
 from time import sleep
 
 # Models
@@ -34,7 +33,7 @@ class TSYS01(object):
             print("Available busses are listed as /dev/i2c*")
             self._bus = None
 
-    def init(self):
+    def init(self) -> bool:
         if self._bus is None:
             print("No bus!")
             return False
@@ -57,7 +56,7 @@ class TSYS01(object):
 
         return True
 
-    def read(self):
+    def read(self) -> bool:
         if self._bus is None:
             print("No bus!")
             return False
