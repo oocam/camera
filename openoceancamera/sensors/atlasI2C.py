@@ -141,7 +141,8 @@ class AtlasI2C(ABC):
             #result = "Error " + self.get_device_info() + ": " + error_code
             result = error_code
         return result
-
+    
+    # TODO: remove this method. No longer required.
     def list_i2c_devices(self) -> List[int]:
         """Lists the addresses of all devices connected to I2C bus."""
         prev_addr = copy.deepcopy(self._address)
@@ -163,6 +164,7 @@ class AtlasI2C(ABC):
             response = raw_data
         return response
 
+    # TODO: See if this could be useful in logging.
     def get_device_info(self) -> str:
         """Returns a string of basic device information.
         
@@ -186,7 +188,10 @@ class AtlasI2C(ABC):
         else:
             return f'{self.module} {str(self.address)} {self.name} \nLast restart cause: {cause}\nVCC pin: {volt}V'
         
-    def query(self, command: str, num_of_bytes: int = 31) -> str:
+    def query(
+        self, 
+        command: str, 
+        num_of_bytes: int = 31) -> str:
         """Writes a command to the sensor, waits correct timeout, and returns the response.
 
         Args:
@@ -210,6 +215,7 @@ class AtlasI2C(ABC):
             return self._read(num_of_bytes)
 
     def _get_command_timeout(self, command: str) -> Optional[float]:
+        """Gets correct timeout for the command that is being sent."""
         timeout = None
         if command.upper().startswith(self._LONG_TIMEOUT_COMMANDS):
             timeout = self._long_timeout
