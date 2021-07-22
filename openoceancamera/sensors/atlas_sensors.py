@@ -32,6 +32,7 @@ from .atlasI2C import AtlasI2C
 import time
 
 
+
 class EC_Sensor(AtlasI2C):
     """Final class to control the Atlas Scientific conductivity sensor (EZO-EC).
 
@@ -39,7 +40,7 @@ class EC_Sensor(AtlasI2C):
     Official datasheet for this sensor: https://atlas-scientific.com/files/EC_EZO_Datasheet.pdf
 
     This sensor can measure 4 parameters:
-    - Electrical conducitivity (Unit: μS/cm) 'PSU(ppt)', 'N/A']
+    - Electrical conducitivity (Unit: μS/cm)
     - Total dissolved solids (Unit: ppm)
     - Salinity (Unit: PSU(ppt))
     - Specific gravity (No unit)
