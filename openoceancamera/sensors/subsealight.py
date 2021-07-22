@@ -2,6 +2,7 @@ import RPi.GPIO as GPIO
 import datetime
 import sys
 from logger import logger
+# TODO : remove unaccessed imports
 
 class SubSeaLight: 
 
@@ -11,7 +12,7 @@ class SubSeaLight:
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(24, GPIO.OUT)
         try: 
-            self.pwm = GPIO.PWM(24,500)  # PIN 12 = Board 32
+            self.pwm = GPIO.PWM(24,500)     # PIN 12 = Board 32
         except Exception as err: 
             logger.error(f"PWM not found")
     
