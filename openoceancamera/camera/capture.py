@@ -19,6 +19,8 @@ from typing import Dict, Any
 # ALSO add docstring for this script, and the package 'camera'.
 
 # TODO: Change all these string concatenations to f strings. 20/07/2021
+
+# TODO: Add missing units for pressure, temp, luminosity, gps position
 def annotate_text_string(sensor_data: str) -> str:
     """Generates a string of all data to be written to logs and photo
 
@@ -44,9 +46,9 @@ def annotate_text_string(sensor_data: str) -> str:
     if not sensor_data["conductivity"] == -1:
         result += "Conductivity: " + str(sensor_data["conductivity"]) + "micro S/cm "
     if not sensor_data["total_dissolved_solids"] == -1:
-        result += "TDS: " + str(sensor_data["total_dissolved_solids"]) + " "
+        result += "TDS: " + str(sensor_data["total_dissolved_solids"]) + "ppm "
     if not sensor_data["salinity"] == -1:
-        result += "Salinity: " + str(sensor_data["salinity"]) + " "
+        result += "Salinity: " + str(sensor_data["salinity"]) + "PSU(ppt) "
     if not sensor_data["specific_gravity"] == -1:
         result += "SG: " + str(sensor_data["specific_gravity"]) + " "
     if not sensor_data["dissolved_oxygen"] == -1:
