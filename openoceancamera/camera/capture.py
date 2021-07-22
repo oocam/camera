@@ -1,8 +1,6 @@
-from typing import Any
 from picamera import PiCamera 
 from datetime import datetime
 from time import sleep 
-import json
 from constants import EXTERNAL_DRIVE
 # from .sensors import readSensorData, writeSensorData
 from sensors import Sensor
