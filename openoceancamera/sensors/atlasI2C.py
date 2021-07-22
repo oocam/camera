@@ -174,11 +174,11 @@ class AtlasI2C(ABC):
         """
         # These are the possible reasons for last shutdown of sensor.
         cause_dict = {
-            'P':'powered off',
+            'P': 'powered off',
             'S': 'software reset', 
             'B': 'brown out',
-            'W':'watchdog',
-            'U':'unknown',
+            'W': 'watchdog',
+            'U': 'unknown',
         }
         response = self.query('status').split(',')
         key, volt = response[1], response[2]    # Volt is the voltage at the VCC Pin.
