@@ -283,8 +283,6 @@ class AtlasI2C(ABC):
         RETURNS: A list of str data measurements.
         """
         raw_data = self.query('r')
-        # TODO: remove this once the code is fixed:
-        print(f'raw data: {raw_data}')
         try:
             data = raw_data.split(',')
             return data
