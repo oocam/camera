@@ -250,7 +250,7 @@ class AtlasI2C(ABC):
                 self._cal_data.append((self.query('Export', 12)))
             return True
         except Exception as err:
-            print(f'Error (I suck): {err}')
+            print(f'set_cal_data Error: {err}')
             return False
         
     def _import_calibration(self) -> bool:
