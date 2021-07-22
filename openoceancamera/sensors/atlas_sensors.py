@@ -64,7 +64,7 @@ class EC_Sensor(AtlasI2C):
                  address: int = 100, 
                  moduletype: str = 'EC', 
                  name: str = 'Atlas_EC_sensor', 
-                 bus: int = 1):
+                 bus: int = 1) -> None:
         """Initialises the sensor and enables all measurement parameters.
 
         See AtlasI2C's (super class) __init__ method for more information.
@@ -223,7 +223,7 @@ class DO_Sensor(AtlasI2C):
                  address: int = 97, 
                  moduletype: str = 'DO', 
                  name: str = 'Atlas_DO_sensor', 
-                 bus: int = 1):
+                 bus: int = 1) -> None:
         """Initialises the sensor and enables all measurement parameters.
 
         See AtlasI2C's (super class) __init__ method for more information.
@@ -348,7 +348,7 @@ class PH_Sensor(AtlasI2C):
                  moduletype: str = 'pH', 
                  name: str = 'Atlas_pH_sensor', 
                  bus: int = 1, 
-                 address: int = 99):
+                 address: int = 99) -> None:
         """Initialises the sensor.
 
         See AtlasI2C's (super class) __init__ method for more information.
