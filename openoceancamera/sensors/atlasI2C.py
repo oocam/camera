@@ -353,6 +353,3 @@ class AtlasI2C(ABC):
             return True
         except:
             return False
-
-if __name__ == '__main__':
-    pass
