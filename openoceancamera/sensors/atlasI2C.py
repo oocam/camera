@@ -133,12 +133,7 @@ class AtlasI2C(ABC):
         if is_valid:
             char_list = self._handle_raspi_glitch(response[1:])
             result = str(''.join(char_list))
-
-            # This line adds a response code to the readings. Optional.
-            #result = "Success " + self.get_device_info() + ": " +  str(''.join(char_list))
-            
         else:
-            #result = "Error " + self.get_device_info() + ": " + error_code
             result = error_code
         return result
     
