@@ -28,7 +28,7 @@ def annotate_text_string(sensor_data: Dict[str, str]) -> str:
     """Generates a string of all data to be written to logs and photo
 
     Args:
-        sensor_data (str): Raw sensor data from the Sensors.get_sensor_data().
+        sensor_data (Dict): Raw sensor data from the Sensors.get_sensor_data().
 
     Returns:
         str: A string of data which will be annotated to the photo.
