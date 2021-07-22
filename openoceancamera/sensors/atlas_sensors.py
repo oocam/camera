@@ -26,8 +26,6 @@ Pinouts:
     VDA - VDA
     OFF - Trim and leave unconnected. 
 """
-from os import strerror
-from typing import List
 from .atlasI2C import AtlasI2C
 import time
 
