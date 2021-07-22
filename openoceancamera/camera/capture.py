@@ -21,6 +21,11 @@ from typing import Dict, Any
 # TODO: Change all these string concatenations to f strings. 20/07/2021
 
 # TODO: Add missing units for pressure, temp, luminosity, gps position
+# 22/07/2021
+
+# TODO: Consider adding commas at the end of each measurement, to
+# seperate them visually. 22/07/2021
+
 def annotate_text_string(sensor_data: str) -> str:
     """Generates a string of all data to be written to logs and photo
 
