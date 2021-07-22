@@ -32,7 +32,6 @@ from .atlasI2C import AtlasI2C
 import time
 
 
-
 class EC_Sensor(AtlasI2C):
     """Final class to control the Atlas Scientific conductivity sensor (EZO-EC).
 
