@@ -225,10 +225,10 @@ class Sensor:
             self.read_sensor_data()
             sensor_data_object = {
                 "pressure": self.pressure,
-                "temperature" : self.temperature,
+                "temperature": self.temperature,
                 "mstemp": self.temperature,
                 "depth": self.depth,
-                "luminosity" : self.luminosity,
+                "luminosity": self.luminosity,
                 "gps": self.gps_coordinates,
                 "conductivity": self.conductivity,
                 "total_dissolved_solids": self.total_dissolved_solids,
@@ -237,8 +237,8 @@ class Sensor:
                 "dissolved_oxygen": self.dissolved_oxygen,
                 "percentage_oxygen": self.percentage_oxygen,
                 "pH": self.pH,
+                "timestamp": datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
             }
-            sensor_data_object["timestamp"] = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
             sensor_data_json = json.dumps(sensor_data_object)
             with open(LOG_FILE, file_mode) as f:
                 f.write(sensor_data_json)
