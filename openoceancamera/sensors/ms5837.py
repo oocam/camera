@@ -33,8 +33,8 @@
 
 try:  
     import math
-    import time  #Used for pausing func to perform ADC temperature conversion.
-    import smbus  #Used for I2C comms with TSYS01.
+    import time     # Used for pausing func to perform ADC temperature conversion.
+    import smbus     # Used for I2C comms with TSYS01.
 except ImportError: 
     print("The smbus module is required.")
     print("Try 'sudo apt-get install python-smbus' in Terminal.")
@@ -44,11 +44,11 @@ class MS5837():
     def __init__(self,model='30BA', bus=1, address=0x76):
         self._reset = 0x1E
         self._read = 0x00 
-        self._osr = [256,512,1024,2048,4096,8192] #Resolution options.
-        self._conv_d1 = [0x40,0x42,0x44,0x46,0x48,0x4A] #Indexed by OSR.
-        self._conv_d2 = [0x50,0x52,0x54,0x56,0x58,0x5A] #Indexed by OSR.
-        self._wait_time = [0.001,0.002,0.003,0.005,0.01,0.02] #Indexed by OSR.
-        self._prom = [0xA0,0xA2,0xA4,0xA6,0xA8,0xAA,0xAC] #PROM addresses.
+        self._osr = [256,512,1024,2048,4096,8192]     # Resolution options.
+        self._conv_d1 = [0x40,0x42,0x44,0x46,0x48,0x4A]     # Indexed by OSR.
+        self._conv_d2 = [0x50,0x52,0x54,0x56,0x58,0x5A]     # Indexed by OSR.
+        self._wait_time = [0.001,0.002,0.003,0.005,0.01,0.02]     # Indexed by OSR.
+        self._prom = [0xA0,0xA2,0xA4,0xA6,0xA8,0xAA,0xAC]     # PROM addresses.
         self._model = model.upper()
         self._bus = bus
         self._address = address
@@ -67,8 +67,8 @@ class MS5837():
         else:
             print("Model not supported by this module.")
 
-
-    def initialize_sensor(self): #Reset sensor and get cal coeffs.
+    def initialize_sensor(self) -> bool:
+        """Resets the sensor and gets the calibration coefficients."""
         self.reset_sensor()
         self._calibration_data()
         check = (self._cal_data[0] & 0xF000) >> 12
@@ -78,7 +78,6 @@ class MS5837():
         else:
             return True
 
-
     def reset_sensor(self): 
         self._i2c.write_byte(self._address,self._reset)
         time.sleep(0.1)  
@@ -86,12 +85,11 @@ class MS5837():
 
     def _calibration_data(self):
         self._cal_data = []
-        for c in self._prom: #Get cal info for each prom address.
+        for c in self._prom:      # Get cal info for each prom address.
             word = self._i2c.read_word_data(self._address,c)
             coeff = ((word & 0xFF) << 8) | (word >> 8) 
             self._cal_data.append(coeff)
             
-    
     def _crc4(self,n_prom):
         n_rem = 0
         n_prom[0] = ((n_prom[0]) & 0x0FFF)
@@ -122,13 +120,13 @@ class MS5837():
             conv_d1_addr = self._conv_d1[idx]
             conv_d2_addr = self._conv_d2[idx]
             wait = self._wait_time[idx]
-        else: #Do the following if the user gives a valid resolution.
+        else:     # Do the following if the user gives a valid resolution.
             idx = self._osr.index(resolution) 
             conv_d1_addr = self._conv_d1[idx]
             conv_d2_addr = self._conv_d2[idx]
             wait = self._wait_time[idx]
 
-        self._i2c.write_byte(self._address,conv_d1_addr) #Issue conversion.
+        self._i2c.write_byte(self._address,conv_d1_addr)    # Issue conversion.
         time.sleep(wait)
         d1 = self._i2c.read_i2c_block_data(self._address,self._read,3) 
         self._d1 = d1[0] << 16 | d1[1] << 8 | d1[2] 
@@ -153,7 +151,7 @@ class MS5837():
         elif self._model == "02BA":
             self._sens = c1*2**16+(c3*self._dt)/2**7
             self._off = c2*2**17+(c4*self._dt)/2**6        
-        self._temp = (2000 + self._dt * c6/(2**23)) #1st order.
+        self._temp = (2000 + self._dt * c6/(2**23))    # 1st order.
            
     
     def _second_order_calculation(self):
@@ -171,7 +169,7 @@ class MS5837():
                 sensi = 0               
             off2 = self._off - offi
             sens2 = self._sens - sensi
-            self.p2 = (((self._d1 * sens2)/2**21-off2)/2**13)/10 #2nd order.
+            self.p2 = (((self._d1 * sens2)/2**21-off2)/2**13)/10    # 2nd order.
             
         elif self._model == "02BA":
             if self._temp/100 < 20:
@@ -253,7 +251,7 @@ class MS5837():
         resolution -- the resolution option of the sensor.
         """
         
-        self.absolute_pressure() #Get the absolute pressure reading.
+        self.absolute_pressure()     # Get the absolute pressure reading.
         p = self.abs_p - sea_level_pressure
         
         if p < 0:

@@ -1,5 +1,4 @@
 import smbus2 as smbus
-
 from time import sleep
 
 # Models
@@ -34,7 +33,7 @@ class TSYS01(object):
             print("Available busses are listed as /dev/i2c*")
             self._bus = None
 
-    def init(self):
+    def init(self) -> bool:
         if self._bus is None:
             print("No bus!")
             return False
@@ -57,15 +56,15 @@ class TSYS01(object):
 
         return True
 
-    def read(self):
+    def read(self) -> bool:
         if self._bus is None:
             print("No bus!")
             return False
 
-        # Request conversion
+        # Request conversion.
         self._bus.write_byte(self._TSYS01_ADDR, self._TSYS01_CONVERT)
 
-        # Max conversion time = 9.04 ms
+        # Max conversion time = 9.04 ms.
         sleep(0.01)
 
         adc = self._bus.read_i2c_block_data(self._TSYS01_ADDR, self._TSYS01_READ, 3)
@@ -73,8 +72,8 @@ class TSYS01(object):
         self._calculate(adc)
         return True
 
-    # Temperature in requested units
-    # default degrees C
+    # Temperature in requested units.
+    # default degrees C.
     def temperature(self, conversion=UNITS_Centigrade):
         if conversion == UNITS_Farenheit:
             return (9 / 5) * self._temperature + 32
@@ -82,7 +81,7 @@ class TSYS01(object):
             return self._temperature - 273
         return self._temperature
 
-    # Cribbed from datasheet
+    # Cribbed from datasheet.
     def _calculate(self, adc):
         adc16 = adc / 256
         self._temperature = (

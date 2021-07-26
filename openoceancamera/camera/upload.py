@@ -6,6 +6,7 @@ from time import sleep
 from constants import EXTERNAL_DRIVE
 from uploader import S3Uploader
 import logging
+from typing import Dict, Any
 
 logging.basicConfig(filename="system_logs.txt", format="%(asctime)s - %(levelname)s - %(message)s", level=logging.INFO)
 logger = logging.getLogger('main')
@@ -18,7 +19,8 @@ try:
 except:
     logger.error("There is no USB connected")
 
-def start_upload(slot):
+
+def start_upload(slot: Dict[str, Any]) -> None:
     logger.info("Starting upload slot")
     upload_handler = S3Uploader()
     zipname = os.path.join(EXTERNAL_DRIVE, datetime.now().strftime('%Y-%m-%d_%H-%M-%S')) + ".zip"

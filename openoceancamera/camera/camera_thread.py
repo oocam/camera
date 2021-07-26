@@ -30,7 +30,7 @@ def camera_thread():
             if(slot["upload"]):
                 try:
                     start_upload(slot)
-                except err:
+                except Exception as err:
                     logger.error(err)
             else:
                 start_capture(slot)

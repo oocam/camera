@@ -1,7 +1,6 @@
 from picamera import PiCamera 
 from datetime import datetime
 from time import sleep 
-import json
 from constants import EXTERNAL_DRIVE
 # from .sensors import readSensorData, writeSensorData
 from sensors import Sensor
@@ -10,12 +9,33 @@ from subsealight import PWM
 from restart import reboot_camera
 from .utils import get_camera_name
 from wiper import run_wiper
+from typing import Dict, Any
 
+# TODO: Add docstrings for these functions. 20/07/2021
+# It'd probably be quite handy the next time an intern or new dev
+# worked on the code.
+# ALSO add docstring for this script, and the package 'camera'.
 
-def annotate_text_string(sensor_data):
+# TODO: Change all these string concatenations to f strings. 20/07/2021
+
+# TODO: Add missing units for pressure, temp, luminosity, gps position
+# 22/07/2021
+
+# TODO: Consider adding commas at the end of each measurement,
+# to seperate them visually. 22/07/2021
+
+def annotate_text_string(sensor_data: Dict[str, str]) -> str:
+    """Generates a string of all data to be written to logs and photo
+
+    Args:
+        sensor_data (Dict): Raw sensor data from the Sensors.get_sensor_data().
+
+    Returns:
+        str: A string of data which will be annotated to the photo.
+    """
     result = ""
     if not sensor_data["camera_name"] == "":
-        result += "Camera: " + sensor_data["camera_name"] + " "
+        result += f"Camera: {sensor_data['camera_name']} "
     if not sensor_data["pressure"] == -1:
         result += "Pressure: " + str(sensor_data["pressure"]) + " "
     if not sensor_data["temperature"] == -1:
@@ -26,10 +46,24 @@ def annotate_text_string(sensor_data):
         result += "Luminosity: " + str(sensor_data["luminosity"]) + " "
     if not sensor_data["gps"]["lat"] == -1 and not sensor_data["gps"]["lng"] == -1:
         result += "Lat: " + str(sensor_data["gps"]["lat"]) + "Lng: " + str(sensor_data["gps"]["lng"]) + " "
+    if not sensor_data["conductivity"] == -1:
+        result += "Conductivity: " + str(sensor_data["conductivity"]) + "micro S/cm "
+    if not sensor_data["total_dissolved_solids"] == -1:
+        result += "TDS: " + str(sensor_data["total_dissolved_solids"]) + "ppm "
+    if not sensor_data["salinity"] == -1:
+        result += "Salinity: " + str(sensor_data["salinity"]) + "PSU(ppt) "
+    if not sensor_data["specific_gravity"] == -1:
+        result += "SG: " + str(sensor_data["specific_gravity"]) + " "
+    if not sensor_data["dissolved_oxygen"] == -1:
+        result += "DO: " + str(sensor_data["dissolved_oxygen"]) + "mg/L "
+    if not sensor_data["percentage_oxygen"] == -1:
+        result += "PO: " + str(sensor_data["percentage_oxygen"]) + "% "
+    if not sensor_data["pH"] == -1:
+        result += "pH: " + str(sensor_data["pH"]) + " "
     return result
 
 
-def capture_video(slot):
+def capture_video(slot: Dict[str, Any]) -> None:
     resolution = slot["resolution"]
     framerate = slot["framerate"]
     iso = slot["iso"]
@@ -56,14 +90,11 @@ def capture_video(slot):
             PWM.switch_on(light)
             camera.start_recording(filename, format="h264")
             current_time = datetime.now() 
-
             sensors = Sensor()
             sensors.write_sensor_data() 
-            sensor_data = sensors.get_sensor_data(short=True)
             while current_time < slot["stop"]: 
                 camera.annotate_text = f"{current_time.strftime('%Y-%m-%d %H:%M:%S')} @ {slot['framerate']} fps"
                 sensors.write_sensor_data() 
-                sensor_data = sensors.get_sensor_data(short=True)
                 sleep(1)
                 current_time = datetime.now() 
             camera.stop_recording() 
@@ -73,7 +104,8 @@ def capture_video(slot):
         logger.error(err)
         reboot_camera()
 
-def capture_images(slot):
+
+def capture_images(slot: Dict[str, Any]) -> None:
     try:
         logger.debug("Going to set camera config")
         resolution = slot["resolution"]
@@ -123,7 +155,8 @@ def capture_images(slot):
         PWM.switch_off()
         logger.error(err)
 
-def start_capture(slot):
+
+def start_capture(slot: Dict[str, Any]) -> None:
     logger.debug("Going to capture")
     if slot["video"]:
         capture_video(slot)
