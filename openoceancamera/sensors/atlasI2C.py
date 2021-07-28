@@ -95,11 +95,6 @@ class AtlasI2C(ABC):
     def moduletype(self):
         return self.module
     
-    @abstractmethod
-    def get_header_row(self):
-        """Get the header row for the data file, to show what data is being read."""
-        return
-    
     def __del__(self):
         try:
             self._file_read.close()
