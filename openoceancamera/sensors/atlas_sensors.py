@@ -6,11 +6,6 @@ class - AtlasI2C.
 These classes are supposed to be instantiated. They initialise the sensors
 and provide whatever functionality is unnique to each sensor.
 
-There are also two functions in this script, that should be used with 
-the sensors:
-    getAllSensorData: Gets data from all sensors.
-    getAllHeaderRows: Gets headers from all sensors.
-
 Note: 
     Code, docstrings, comments and type annotation formatting as
     per Google Python Style Guide:
@@ -43,20 +38,22 @@ class EC_Sensor(AtlasI2C):
     - Specific gravity (No unit)
 
     Public Methods:
-        get_header_rows: Shows the measurement params and the units for them.
         set_TDS_conv: Sets the conversion factor for total dissolved solids calculation. 
         get_TDS_conv: Shows the current conversion factor for TDS calculation.
         set_temp_compensation: Sets the temperature in order to compensate for it.
         set_params: Enables/disables measurement parameters.
         set_probe: Sets the type/model of probe.
         get_probe: Shows the probe model that is currently set.
+        get_conductivity: Gets the conductivity readings.
+        get_salinity: Gets the salinity readings.
+        get_tds: Gets the total dissolved solids readings.
+        get_salinity: Gets the salinity readings.
     
     Example Use:
         ec_sensor = EC_Sensor()    # Sets up the class for the sensor, it automatically gets initialised.
         ec_sensor.initialise_sensor()    # To re initialise it if you want.
         
-        print(ec_sensor.get_header_rows())    # Shows a header row to start the data file with.
-        print(ec_sensor.get_data())   # Takes readings.
+        ec_sensor.get_conductivity()   # Takes readings.
     """
     _PARAMS = ['EC', 'TDS', 'S', 'SG']
 
@@ -69,6 +66,9 @@ class EC_Sensor(AtlasI2C):
 
         See AtlasI2C's (super class) __init__ method for more information.
         """
+        # The .initialise method is called in AtlasI2C __init__ 
+        # to initialise the sensors.
+
         super().__init__(moduletype=moduletype, name=name, address=address, bus=bus)
 
         for param in self._PARAMS:    # Ensures that all measurement params are enabled.
@@ -201,21 +201,22 @@ class DO_Sensor(AtlasI2C):
     Official datasheet for this sensor: https://atlas-scientific.com/files/DO_EZO_Datasheet.pdf
 
     Public Methods:
-        get_header_rows: Shows the measurement params and the units for them.
         set_temp_compensation: Sets the temperature in order to compensate for it.
         set_press_compensation: Sets the pressure in order to compensate for it.
         set_sal_compensation: Sets the salinity in order to compensate for it.
         set_params: Enables/disables measurement parameters.
+        get_do: Gets dissolved oxygen readings.
+        get_percentage_oxygen: Gets percentage oxygen readings.
 
     This sensor can measure 2 parameters:
     - Dissolved oxygen (Unit: mg/L)
     - Percentage oxygen (Unit: % saturation)
+
     Example Use:
         do_sensor = DO_Sensor()    # Sets up the class for the sensor, it automatically gets initialised.
         do_sensor.initialise_sensor()    # To re initialise it if you want.
         
-        print(do_sensor.get_header_rows())    # Shows a header row to start the data file with.
-        print(do_sensor.get_data())   # Takes readings.
+        do_sensor.get_do()  # Takes readings.
     """
     _PARAMS = ['DO', '%']
     
@@ -228,6 +229,8 @@ class DO_Sensor(AtlasI2C):
 
         See AtlasI2C's (super class) __init__ method for more information.
         """
+        # The .initialise method is called in AtlasI2C __init__ 
+        # to initialise the sensors.
         super().__init__(address=address, moduletype=moduletype, name=name, bus=bus)
 
         for param in self._PARAMS:    # Ensures that all measurement parameters are enabled.
@@ -332,16 +335,15 @@ class PH_Sensor(AtlasI2C):
     - pH (Unit: pH)
 
     Public Methods:
-        get_header_rows: Shows the measurement params and the units for them.
         set_temp_compensation: Sets the temperature in order to compensate for it.
         get_slope: Shows how well the probe is working compared to an ideal probe.
+        get_ph: Gets pH readings.
     
     Example Use:
         ph_sensor = PH_Sensor()    # Sets up the class for the sensor, it automatically gets initialised.
         ph_sensor.initialise_sensor()    # To re initialise it if you want.
         
-        print(ph_sensor.get_header_rows())    # Shows a header row to start the data file with.
-        print(ph_sensor.get_data())   # Takes readings.
+        ph_sensor.get_ph()   # Takes readings.
     """
     # Only reads pH, so no _PARAMS or _UNITS class attributes.
     def __init__(self,
@@ -353,8 +355,10 @@ class PH_Sensor(AtlasI2C):
 
         See AtlasI2C's (super class) __init__ method for more information.
         """
+        # The .initialise method is called in AtlasI2C __init__ 
+        # to initialise the sensors.
         super().__init__(moduletype=moduletype, name=name, bus=bus, address=address)
-
+        
     def get_ph(self) -> float:
         """Explicitly returns the pH measurement."""
         try:
